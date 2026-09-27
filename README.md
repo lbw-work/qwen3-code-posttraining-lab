@@ -9,7 +9,7 @@
 ## 当前状态
 
 - 已实现模型版本锁定、SFT/RL 数据准备、Full SFT、LoRA SFT、DPO、奖励模型、PPO、GRPO、统一生成、Docker 隔离判分和最终对比脚本。核心训练和数据处理函数附有中文注释，适合对照代码学习。
-- Base、Full SFT、LoRA SFT 已完成：两次 SFT 均在单张 RTX 4090 上训练，三个模型均在本机对全部 542 题生成代码并用 Docker 判分。逐题生成、判分和独立摘要分别保存在 `results/base/20260922T010155Z/`、`results/full_sft/full-v1/`、`results/lora_sft/lora-v1/`。训练权重未上传到仓库。
+- Base、Full SFT、LoRA SFT 已完成：两次 SFT 均在单张 RTX 4090 上训练，三个模型均在本机对全部 542 题生成代码并用 Docker 判分。逐题生成、判分和独立摘要分别保存在 `results/base/20260922T010155Z/`、`results/full_sft/full-v1/`、`results/lora_sft/lora-v1/`。训练权重放在 Hugging Face，GitHub 只保存代码、数据处理记录与评测证据。
 - 当前结果见下图和[训练与评测记录](docs/sft-comparison.md)。DPO、奖励模型、PPO、GRPO 尚未完成正式训练与评测。
 - 公开评测固定为 HumanEval+ v0.1.10（164 题）和 MBPP+ v0.2.0（378 题）。`eval.jsonl` 与官方测试快照的哈希见 `eval.lock.json`。独立自建复核题尚未加入，先不要把现有结果称为最终实验结论。
 - 标准答案直接判分的自检为 HumanEval+ 163/164、MBPP+ 377/378；HumanEval/32 和 Mbpp/255 连题库自带的答案也未通过当前测试。所有模型仍按完整 164/378 题报告，逐题记录保留。
@@ -26,18 +26,30 @@
 
 表中使用相同的冻结题集、原始 prompt、贪心解码和严格 EvalPlus+ 测试；每题只生成一次。LoRA SFT 在这两套测试中最高，但这只说明当前训练与评测设置下的表现，不代表其它代码任务也有相同排序。详见[训练配置、逐题结果与局限](docs/sft-comparison.md)。
 
+## 模型权重（Hugging Face）
+
+| 模型 | 下载与模型卡 | 使用时需要什么 |
+| --- | --- | --- |
+| Full SFT `full-v1` | [Qwen3-1.7B-Python-Code-Full-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-Full-SFT) | 完整模型，直接用 Transformers `from_pretrained` 加载。 |
+| LoRA SFT `lora-v1` | [Qwen3-1.7B-Python-Code-LoRA-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-LoRA-SFT) | 仅包含适配器；先加载 `models.lock.json` 锁定的 Base，再用 PEFT 叠加。 |
+
+复现实验时请固定 Hugging Face 提交号：Full SFT 为 `aed510bf517353217c77e001b8f2940aa140da2d`，LoRA SFT 为 `2f8982c3bebe1479f4834e246c98aa2dfecbc69e`。
+
+模型卡包含训练设置、评测口径、限制和最小推理示例。二者都是**原始代码续写模型**，输入与评测一致的 Python 函数题干；不要把这里的通过率理解为聊天助手或完整软件工程任务的能力。
+
 ## 数据流
 
 ```text
 锁定 Base 权重 ──┬── Base 评测
-               ├── Full SFT ──────────────────────────── 评测
-               └── LoRA SFT ─┬───────────────────────── 评测
-                             ├── DPO ────────────────── 评测
-                             ├── 奖励模型 → PPO ──────── 评测
-                             └── 测试执行奖励 → GRPO ─── 评测
+               ├── Full SFT ────────────────────────── 评测
+               ├── LoRA SFT ─┬─────────────────────── 评测
+               │             ├── DPO ──────────────── 评测
+               │             ├── PPO ──────────────── 评测
+               │             └── GRPO ─────────────── 评测
+               └── 偏好数据训练奖励模型 ── 给 PPO 打分
 ```
 
-后三条策略路线均从**同一个 LoRA SFT 适配器**出发。DPO 和奖励模型共用 `data/preference/`；PPO 和 GRPO 共用 `data/rl/` 的题干。GRPO 奖励来自训练数据自带的测试，绝不读取 EvalPlus 的隐藏测试。
+DPO、PPO、GRPO 的**策略模型**均从同一个 LoRA SFT 适配器出发；PPO 使用的奖励模型则单独从 Base 和偏好数据训练。DPO 与奖励模型共用 `data/preference/`；PPO 和 GRPO 共用 `data/rl/` 的题干。GRPO 奖励来自训练数据自带的测试，绝不读取 EvalPlus 的隐藏测试。
 
 ## 代码架构与设计
 
@@ -90,7 +102,7 @@ eval.jsonl + 模型
 
 公开仓库随附已处理的 `data/sft/`、`data/rl/`、对应锁文件及 Base 判分结果。
 服务器克隆后无需重新运行 `prepare_sft.py` 或 `prepare_rl.py`；这两个脚本用于从原始数据重新构建，遇到已有数据会停止，以免覆盖冻结版本。
-模型权重没有随 GitHub 仓库上传；服务器运行 `download_models.py`，按 `models.lock.json` 的提交号下载 Base 和参考模型。
+Base 和官方参考模型的权重没有随 GitHub 仓库上传；服务器运行 `download_models.py`，按 `models.lock.json` 的提交号下载。已训练的 Full SFT / LoRA SFT 权重从上面的 Hugging Face 模型仓库获取。
 
 ```bash
 python -m pip install -r requirements.txt

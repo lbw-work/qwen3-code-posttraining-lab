@@ -1,6 +1,6 @@
 # Base、Full SFT 与 LoRA SFT 阶段报告
 
-本报告记录截至 2026-09-24 已完成的三个阶段。训练权重保存在本地或服务器，没有纳入 GitHub 仓库；仓库保存逐题生成、Docker 判分、配置和摘要，便于之后与 DPO、PPO、GRPO 使用同一口径比较。
+本报告记录截至 2026-09-24 已完成的三个阶段。[Full SFT 完整模型](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-Full-SFT)和[LoRA SFT 适配器](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-LoRA-SFT)发布在 Hugging Face；GitHub 仓库保存逐题生成、Docker 判分、配置和摘要，便于之后与 DPO、PPO、GRPO 使用同一口径比较。
 
 ![三个阶段在 HumanEval+ 和 MBPP+ 上的严格 pass@1](assets/sft-comparison.svg)
 
