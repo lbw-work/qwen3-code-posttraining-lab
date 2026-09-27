@@ -1,10 +1,14 @@
-# Qwen3 1.7B Python 函数后训练
+# Qwen3 Code Post-Training Lab｜代码后训练学习项目
 
-目标：在单张 RTX 4090 上，从 `Qwen/Qwen3-1.7B-Base` 出发，按同一口径比较 Base、Full SFT、LoRA SFT、DPO、Reward Model + PPO、GRPO 的代码通过率。正式长训练由你在服务器运行；每一步都写入独立目录，不覆盖前一阶段。
+从 `Qwen/Qwen3-1.7B-Base` 出发，在单张 RTX 4090 上学习和复现 **Python 函数代码生成的后训练**：数据清洗 → Full SFT / LoRA SFT → DPO / 奖励模型 + PPO / GRPO → 同一题集评测。这里的重点是读懂每一步的数据流、训练目标和评测约束；它是学习与实验项目，不是生产级训练框架，也不宣称达到最优代码模型效果。
+
+**English:** A hands-on, reproducible learning project for Qwen3-1.7B code post-training, covering SFT, LoRA, DPO, PPO, GRPO and EvalPlus evaluation.
+
+建议从[已验证结果](#已完成阶段的代码通过率)了解当前进度，再按[代码架构](#代码架构与设计)和[阅读路线](#建议的代码阅读路线)进入实现。每次训练和评测写入独立目录，便于之后横向比较。
 
 ## 当前状态
 
-- 已实现模型版本锁定、SFT/RL 数据准备、Full SFT、LoRA SFT、DPO、奖励模型、PPO、GRPO、统一生成、Docker 隔离判分和最终对比脚本。
+- 已实现模型版本锁定、SFT/RL 数据准备、Full SFT、LoRA SFT、DPO、奖励模型、PPO、GRPO、统一生成、Docker 隔离判分和最终对比脚本。核心训练和数据处理函数附有中文注释，适合对照代码学习。
 - Base、Full SFT、LoRA SFT 已完成：两次 SFT 均在单张 RTX 4090 上训练，三个模型均在本机对全部 542 题生成代码并用 Docker 判分。逐题生成、判分和独立摘要分别保存在 `results/base/20260922T010155Z/`、`results/full_sft/full-v1/`、`results/lora_sft/lora-v1/`。训练权重未上传到仓库。
 - 当前结果见下图和[训练与评测记录](docs/sft-comparison.md)。DPO、奖励模型、PPO、GRPO 尚未完成正式训练与评测。
 - 公开评测固定为 HumanEval+ v0.1.10（164 题）和 MBPP+ v0.2.0（378 题）。`eval.jsonl` 与官方测试快照的哈希见 `eval.lock.json`。独立自建复核题尚未加入，先不要把现有结果称为最终实验结论。
@@ -34,6 +38,51 @@
 ```
 
 后三条策略路线均从**同一个 LoRA SFT 适配器**出发。DPO 和奖励模型共用 `data/preference/`；PPO 和 GRPO 共用 `data/rl/` 的题干。GRPO 奖励来自训练数据自带的测试，绝不读取 EvalPlus 的隐藏测试。
+
+## 代码架构与设计
+
+### 1. 数据层：先锁版本，再训练
+
+| 代码入口 | 输入 → 输出 | 为什么这样设计 |
+| --- | --- | --- |
+| [`download_models.py`](scripts/download_models.py)、[`models.lock.json`](models.lock.json) | 官方模型 → 固定提交号的本地 Base / 参考模型 | 避免上游模型更新后，同一实验名对应不同权重。 |
+| [`freeze_eval.py`](scripts/freeze_eval.py)、[`eval.lock.json`](eval.lock.json) | EvalPlus 官方题库 → `eval.jsonl` 与测试快照 | 训练前固定题目、版本和 SHA-256；训练处理只读取题干，不读取隐藏测试。 |
+| [`prepare_sft.py`](scripts/prepare_sft.py) | OpenCodeInstruct → `data/sft/{train,valid}.jsonl` | 只保留测试全过、可解析且含函数的 Python 代码；按题干去重，排除与评测题干明显重合的样本。输出 `prompt` / `completion` 两列。 |
+| [`prepare_rl.py`](scripts/prepare_rl.py) | SFT 来源记录 → `data/rl/{train,valid}.jsonl` | 保留训练题自带的 `tests`，供 GRPO 算执行奖励；不使用公开评测的隐藏测试。 |
+| [`export_themis.py`](scripts/export_themis.py) → [`prepare_preference.py`](scripts/prepare_preference.py) | Themis Python 功能正确性偏好 → `prompt` / `chosen` / `rejected` | DPO 与奖励模型共用同一批偏好对；过滤语法错误、重复和评测重合。此数据阶段尚未正式完成。 |
+
+所有处理后的数据都有对应 `*.lock.json`，记录源版本、输出哈希与评测版本。脚本发现已存在的冻结输出时会停止，防止重跑悄悄覆盖实验输入。
+
+### 2. 训练层：同一底座，逐阶段增加目标
+
+| 阶段与入口 | 读入什么 | 训练目标与产物 | 当前状态 |
+| --- | --- | --- | --- |
+| [`train_sft.py`](scripts/train_sft.py) `--mode full/lora` | 同一份 SFT `prompt` / `completion`、锁定 Base | 只对代码答案计算交叉熵：题干 token 的标签为 `-100`。Full 更新全部参数；LoRA 只更新低秩矩阵。各自保存 `final_model/` 和 `training_meta.json`。 | 已在 4090 训练并完整评测 |
+| [`train_dpo.py`](scripts/train_dpo.py) | LoRA SFT、`chosen` / `rejected` | 比较同一题两份答案在可训练策略和冻结参考策略下的对数概率，直接优化偏好差；手写 PyTorch 损失。 | 代码已实现，尚未正式训练 |
+| [`train_reward.py`](scripts/train_reward.py) → [`train_ppo.py`](scripts/train_ppo.py) | 偏好对训练的奖励模型、LoRA SFT、RL 题干 | 奖励模型先学习给答案打分；PPO 再采样回答，用奖励、KL、GAE、裁剪损失更新 LoRA 与价值头。PPO 循环自行实现。 | 代码已实现，尚未正式训练 |
+| [`train_grpo.py`](scripts/train_grpo.py) + [`code_reward.py`](scripts/code_reward.py) | LoRA SFT、RL 题干及训练测试 | 每题采样 4 份代码，在隔离容器里执行训练测试，以组内相对得分更新策略；手写 PyTorch 损失。 | 代码已实现，尚未正式训练 |
+
+[`train_common.py`](scripts/train_common.py) 负责后续阶段共用的运行目录、锁文件校验与适配器路径检查。DPO、PPO、GRPO 都从**同一份 LoRA SFT** 分叉，便于比较三种偏好优化路线；这不意味着它们已取得正式效果。
+
+### 3. 评测层：生成与执行隔离
+
+```text
+eval.jsonl + 模型
+  → generate_eval.py       只生成代码，保存原始 completion
+  → score_eval.py          在禁网、限资源 Docker 内运行 EvalPlus 测试
+  → summarize_eval.py      校验题目数和判分哈希，计算各阶段 pass@1
+  → compare_eval.py        六阶段完成后再生成最终横向对比
+```
+
+[`generate_eval.py`](scripts/generate_eval.py) 对完整模型直接加载权重，对 LoRA 自动加载锁定 Base 再叠加适配器。它不执行生成代码；[`score_eval.py`](scripts/score_eval.py) 才把代码交给 Docker。两套公开题始终使用同一原始 prompt、贪心解码、每题一次生成和最多 512 个新 token。按阶段保存原始输出、逐题判分、配置与摘要，避免只留下一个无法追溯的总分。
+
+### 建议的代码阅读路线
+
+1. 看 [`eval.jsonl`](eval.jsonl)、[`freeze_eval.py`](scripts/freeze_eval.py)：先理解“同一套题”怎样固定下来。
+2. 看 [`prepare_sft.py`](scripts/prepare_sft.py) 和 [`data/examples/`](data/examples/)：跟踪一条原始记录如何变为 `prompt` / `completion`。
+3. 看 [`train_sft.py`](scripts/train_sft.py)：重点找标签掩码、Full 与 LoRA 的参数更新范围、最佳 checkpoint 的选择。
+4. 看 [`generate_eval.py`](scripts/generate_eval.py) → [`score_eval.py`](scripts/score_eval.py) → [`summarize_eval.py`](scripts/summarize_eval.py)：用一条题目追踪从生成代码到 pass@1 的全过程。
+5. 再看 [`prepare_preference.py`](scripts/prepare_preference.py) → [`train_dpo.py`](scripts/train_dpo.py) → [`train_reward.py`](scripts/train_reward.py) / [`train_ppo.py`](scripts/train_ppo.py) → [`train_grpo.py`](scripts/train_grpo.py)：比较各方法的训练信号从哪里来、哪些模型被冻结。
 
 ## 环境与数据准备
 
