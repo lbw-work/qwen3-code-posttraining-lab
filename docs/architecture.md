@@ -72,6 +72,8 @@ python scripts/check_project.py
 Docker 探针和 CUDA 冒烟是两个独立验收步骤：CPU 测试通过不能证明 GPU 环境已
 验证，也不能证明完整训练有能力提升。每次训练用新 `run-id`，不能覆盖已有实验。
 
+GitHub 自动检查固定 Ubuntu 24.04，并按官方提交 SHA 锁定 checkout / setup-python 动作（Node.js 24），避免运行器标签和动作标签漂移。它不下载大模型、不运行正式训练。
+
 ## 数据、模型与审计记录规则
 
 - GitHub 发布 SFT、RL、偏好 v2、PPO、GRPO 的当前冻结 JSONL、锁文件及六阶段结果。
