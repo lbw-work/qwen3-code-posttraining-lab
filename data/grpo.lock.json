@@ -1,0 +1,69 @@
+{
+  "profile": "grpo-execution-audited-v1",
+  "counts": {
+    "train": 2005,
+    "valid": 124
+  },
+  "filter_counts": {
+    "train": {
+      "input_rows": 26805,
+      "not_function_module": 11228,
+      "eval_overlap": 1496,
+      "external_dependency": 1152,
+      "engineering_prompt": 1214,
+      "io_or_dynamic_execution": 252,
+      "prompt_over_limit": 82,
+      "invalid_or_insufficient_tests": 202,
+      "program_or_embedded_code_prompt": 9,
+      "method_needs_class_context": 2,
+      "undefined_global": 1,
+      "static_candidates": 11167,
+      "entry_cap_or_dev_overlap": 718,
+      "execution_rejected": 84,
+      "duplicate": 163
+    },
+    "valid": {
+      "input_rows": 1386,
+      "not_function_module": 546,
+      "overlap_with_sft_train": 150,
+      "engineering_prompt": 69,
+      "external_dependency": 58,
+      "eval_overlap": 73,
+      "io_or_dynamic_execution": 15,
+      "invalid_or_insufficient_tests": 7,
+      "prompt_over_limit": 6,
+      "static_candidates": 462,
+      "execution_rejected": 6
+    }
+  },
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "rl_lock_sha256": "c42da48e89786b5884c035539803fbfa3c831c97d9362264939ffc2d4b6bb4a2",
+  "sft_lock_sha256": "b741feed36517d40769017c9091470ce9747f14680dc6e7c4425225764d7203f",
+  "train_sha256": "43fa3353ceef3af53d20b4b0680b789d7ad60cdebc85e4e35b2d18fa7af6b91d",
+  "valid_sha256": "107c4f5b97b254cd6d6302e3f499e52055cca52992402857f08215ee4252877f",
+  "provenance_sha256": "6a8ca20770a83304da22c7b22be9cf2a5ce3ad2744289756ea306b206dafa1ee",
+  "audit_sha256": "f4e8318f69649d10f7a437f321311f63182f65d331b4572242d4ffa129e59875",
+  "worker_sha256": "b731ddcaa89b0a2d2ba26384c93c5f3c861c39d2b3176b14640dd7613afa1670",
+  "builder_sha256": "e92ba70b311b46171648600eb2ee8f97a9831b97123d91d508ad53aad53c4321",
+  "tokenizer_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+  "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+  "max_prompt_tokens": 512,
+  "max_completion_tokens": 512,
+  "seed": 42,
+  "limitation": "训练测试和部分可解析题干示例的执行复核；不证明所有输入正确。valid 曾用于 SFT 验证，不是未触碰测试集。",
+  "initial_lock_sha256": "035cc12ac97c6749323d4fcfd68ec827b2f93dd6249455d339e70e3f97ddc2ed",
+  "quality_sha256": "a32029ba4da4d1b43e289a1b2724c082ce4b043fefc1f5e3d02cf335ca892b9d",
+  "quality_audit_sha256": "3505eb1a65bf16da24724d689481bddc1ad94edb9f9aff50d32b8d9058dde702",
+  "quality_script_sha256": "e17645b6b0b12c0693c77480ec4088081b9995d4c2a29f6f713a08081e5f314d",
+  "sft_tokenizer_sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+  "finalizer_sha256": "f69293a4c64df418bcc83334a758f0ca56c8d3ce988314ea0282c16327e1b750",
+  "entry_checks": {
+    "corrected_helper_entry": 26,
+    "train_multiple_public_entries": 5,
+    "valid_multiple_public_entries": 1,
+    "train_actual_entry_in_valid": 6,
+    "train_actual_entry_cap": 1
+  },
+  "quality_script_file": "data/raw/grpo-preparation/quality-script-v1.py",
+  "semantic_review_sha256": "2901f9826d476de849c96acaeca9883c056a6dafa9691a1507a1feb04d0fee92"
+}

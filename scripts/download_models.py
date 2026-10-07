@@ -6,7 +6,7 @@ from pathlib import Path
 from huggingface_hub import HfApi, snapshot_download
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from qwen_posttrain.artifacts import ROOT
 MODELS = {
     "base": "Qwen/Qwen3-1.7B-Base",
     "reference": "Qwen/Qwen3-1.7B",

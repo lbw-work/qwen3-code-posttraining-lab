@@ -6,5 +6,21 @@ __pycache__/
 models/
 results/smoke/
 data/raw/
-data/preference/
 runs/
+
+# Editable package/build output and machine-local credentials.
+*.egg-info/
+build/
+dist/
+*.token
+.env
+.env.*
+*.tar.gz
+
+# Publish only the frozen GRPO audit evidence from raw intermediates.
+!data/raw/
+data/raw/*
+!data/raw/grpo-preparation/
+data/raw/grpo-preparation/*
+!data/raw/grpo-preparation/quality-audit.jsonl
+!data/raw/grpo-preparation/quality-script-v1.py

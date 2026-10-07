@@ -1,0 +1,4 @@
+# Raw experiment evidence must retain its original bytes and log spacing.
+results/** -text -whitespace
+docs/evidence/** -text -whitespace
+docs/preference-examples.md -whitespace

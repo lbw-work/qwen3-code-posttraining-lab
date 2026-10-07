@@ -1,0 +1,866 @@
+{
+  "pairs": 3365,
+  "counts": {
+    "prompt_mentions_any_function_name": 2313,
+    "chosen_rejected_same_function_names": 3365,
+    "source_seen_in_sft_train": 3365,
+    "chosen_exactly_sft_completion": 3365,
+    "valid_source_seen_in_sft_train": 153,
+    "token_boundary_matches_concat": 6730,
+    "duplicate_prompts": 0,
+    "duplicate_chosen_ast": 0,
+    "train_valid_prompt_overlap": 0
+  },
+  "mutations": {
+    "False -> True": 261,
+    "< -> <=": 258,
+    "1 -> 0": 615,
+    "0 -> 1": 913,
+    "!= -> ==": 12,
+    "> -> >=": 197,
+    "True -> False": 81,
+    "- -> +": 243,
+    "and -> or": 124,
+    "or -> and": 96,
+    "<= -> <": 183,
+    "* -> +": 57,
+    "+ -> -": 181,
+    "== -> !=": 81,
+    ">= -> >": 63
+  },
+  "rejected_scores": {
+    "0.8": 771,
+    "0.9": 1326,
+    "0.5": 375,
+    "0.6": 375,
+    "0.7": 518
+  },
+  "sample_seed": 20261004,
+  "sample_checks": [
+    {
+      "source_id": "a0b365528c68fcc3afd3ecf4443568e9",
+      "split": "train",
+      "row_number": 716,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "eed7a6d2545284c5216c5c757f2fd259",
+      "split": "train",
+      "row_number": 222,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "94b32e3c38aa8ed47431eca9a2fce03b",
+      "split": "train",
+      "row_number": 3091,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ee088040ed7b2574b8dceb844a580624",
+      "split": "train",
+      "row_number": 1241,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "5e3cc2a1d357ef5adbf12cd8aa811a05",
+      "split": "train",
+      "row_number": 1610,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "15ca3c6a714fc11f95ccdee5937e0e30",
+      "split": "train",
+      "row_number": 1125,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "572782077f8dc02252a2b8a1add912ec",
+      "split": "train",
+      "row_number": 2143,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "1e820f56b6939052c11555afe1a2f147",
+      "split": "train",
+      "row_number": 782,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c47fb8be559cb656b0691ddb35d4c6c2",
+      "split": "train",
+      "row_number": 3045,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "e05d9761043265c8fee13deaed0ae6d7",
+      "split": "train",
+      "row_number": 2891,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "944fb3738114b1c364f6463a90f2b9ba",
+      "split": "train",
+      "row_number": 2751,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "6d88b9b56db25f2cc38dbb1b3d553570",
+      "split": "train",
+      "row_number": 520,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "b37efdef8a5cde655a6bd3dfe98c5bb9",
+      "split": "train",
+      "row_number": 1950,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "6ba3f23e863b46b7ae86f40090a249b3",
+      "split": "train",
+      "row_number": 594,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "8745065ee4ca3e0508cd6696d3bdad7b",
+      "split": "train",
+      "row_number": 1612,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "80e31ab9a12374d9f215d5dc342227ca",
+      "split": "train",
+      "row_number": 2446,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "c98d667c1fab6f1f79f016420e41a6b6",
+      "split": "train",
+      "row_number": 1473,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "9f75a2b77c029980e23ef5287bb08ae4",
+      "split": "train",
+      "row_number": 853,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "3f2403a5428adb567643a0951f59c962",
+      "split": "train",
+      "row_number": 877,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "f560008ffaea45d25691245ccffb65e9",
+      "split": "train",
+      "row_number": 388,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "c304a83ea5008d703d8d45e28c5f163e",
+      "split": "train",
+      "row_number": 1020,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "4895be2da0946cb58a23b2fd873151b5",
+      "split": "train",
+      "row_number": 735,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "b1c87c648e35e1b740c4f8647ccf4ee8",
+      "split": "train",
+      "row_number": 1095,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "a78bc026d0a0641160ff1ad29511df03",
+      "split": "train",
+      "row_number": 1629,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "5b271d999ef6d1d684c22db5fad96e2b",
+      "split": "train",
+      "row_number": 1070,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "f9023a07e7854ad2a808f003ebe980f6",
+      "split": "train",
+      "row_number": 777,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "412f6afc06c28690d64a976d0445b8dc",
+      "split": "train",
+      "row_number": 636,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "4bd85e12df37573098946145d566c116",
+      "split": "train",
+      "row_number": 2627,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "803bf847c0587d83b9bd91c1c32d6c77",
+      "split": "train",
+      "row_number": 1015,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "085ff4090f35c8b1cbe3baefe2129daa",
+      "split": "train",
+      "row_number": 303,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "41720806518d62db63b67436bbc61abe",
+      "split": "train",
+      "row_number": 607,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "eb55da762e2f6a5d48db3b8ac0a5e695",
+      "split": "train",
+      "row_number": 1724,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "fa882b76b1ccb7a4fe34ab41dfec52f8",
+      "split": "train",
+      "row_number": 1751,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "9bcfba9af010706db20e81b54114f065",
+      "split": "train",
+      "row_number": 902,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "a7ebc34d28d3c867ca3dd64f4bdb6a41",
+      "split": "train",
+      "row_number": 1513,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "41b89a448ad0be4f059cffd68349bbdf",
+      "split": "train",
+      "row_number": 250,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "2954e6f2193015189c2dae822d700642",
+      "split": "train",
+      "row_number": 938,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "5e920a7590f3e509579d2d315c1da664",
+      "split": "train",
+      "row_number": 1142,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "b25afc172920be753d889320d33a48e7",
+      "split": "train",
+      "row_number": 2978,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "415dcd9808a2027980d0b974058c0e8d",
+      "split": "train",
+      "row_number": 1585,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "00f750839c4e16a8a16f39c8e28cc181",
+      "split": "train",
+      "row_number": 2833,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ee19fb2a4baee5e05dc101c455befd59",
+      "split": "train",
+      "row_number": 1512,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c622068ca793d9468ad87bca57248d54",
+      "split": "train",
+      "row_number": 1042,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "9400ce173f6e4c31a817618d304ef12a",
+      "split": "train",
+      "row_number": 1151,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "03d35dbb72263a45051e1f46f16e2621",
+      "split": "train",
+      "row_number": 2441,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "641687a37a75535615c7d3d8b4a42d48",
+      "split": "train",
+      "row_number": 1343,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "6827a3d38472c5fa9de50385c9d24eaa",
+      "split": "train",
+      "row_number": 2774,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "5a8b93b723bd45b80eec1a40e6bb7790",
+      "split": "train",
+      "row_number": 90,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "2f7dcfa0f021b41e3f35aec7e0f694df",
+      "split": "train",
+      "row_number": 73,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "f6079d1da44e0a8865544e6ffab3e10f",
+      "split": "train",
+      "row_number": 2515,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c2e7979f26ccc89df13bce171b0f92fa",
+      "split": "train",
+      "row_number": 1367,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c6edde8cfc4c6cfc7b6b763e34034ee2",
+      "split": "train",
+      "row_number": 2422,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "bc65c53cbef878d2ad0d5c47dfcedee0",
+      "split": "train",
+      "row_number": 768,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "15e167fbd39d1c27220d973320538d16",
+      "split": "train",
+      "row_number": 519,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "09dde2a813a3ece4095e869529a7c20c",
+      "split": "train",
+      "row_number": 1191,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "7373172daa7029910a48695e978ff3a7",
+      "split": "train",
+      "row_number": 2226,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "35adf0092eae0fae58564b09a6f36a84",
+      "split": "valid",
+      "row_number": 87,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "b66097db17aafddd6dc8583949747152",
+      "split": "train",
+      "row_number": 2496,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "0f2bec4eebb560932dd29e800c335ea2",
+      "split": "train",
+      "row_number": 1763,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "9151d0bb20f6367080919637de1c3aa7",
+      "split": "train",
+      "row_number": 484,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "447ef6053d7c2f058ab3236879779e59",
+      "split": "train",
+      "row_number": 893,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "e15288fad6062e2e80f43fb8512a96ae",
+      "split": "train",
+      "row_number": 538,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "eec7f3628ed67ae11b54d9273cf9e47d",
+      "split": "train",
+      "row_number": 1460,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ffce063a6186a1a2b9eacd0bf111c378",
+      "split": "train",
+      "row_number": 2632,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "a8e62b9a6152076f79d13c9724bbf504",
+      "split": "train",
+      "row_number": 1189,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "99535d0f66286141a99031ccc20ce714",
+      "split": "train",
+      "row_number": 1822,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "26eba9da75c8700ec7f6e17b45ee74e1",
+      "split": "train",
+      "row_number": 2846,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "62c68611709ad331ec0fb9c1d4969b11",
+      "split": "train",
+      "row_number": 2267,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "71e51c165679bc88d596d0adbc948123",
+      "split": "train",
+      "row_number": 2919,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "b70e8306a29b99154779a64d2623fa13",
+      "split": "train",
+      "row_number": 1535,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "0f214bc954aa1a6d07560024951a9eb5",
+      "split": "valid",
+      "row_number": 97,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "a04ccef32b0678b12bb0d9cd42412e59",
+      "split": "train",
+      "row_number": 3155,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "63aed01a9e9ce58597417ab8e3a346f7",
+      "split": "train",
+      "row_number": 2914,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "9552236f1972e4065b481444b73e20e6",
+      "split": "train",
+      "row_number": 125,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "9588f6a6caeb054d2137f505529563d2",
+      "split": "train",
+      "row_number": 858,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "0fd90d99ed67ac3f2948c42f5d7c1489",
+      "split": "train",
+      "row_number": 231,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "c29dc0cc5d428ea84b1f51c0afdb7d90",
+      "split": "train",
+      "row_number": 2501,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "de5d626b2bac355850c409f15d5ac708",
+      "split": "train",
+      "row_number": 2859,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "54f007c26c447e7d48e0106584585c04",
+      "split": "valid",
+      "row_number": 23,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "2d1e360a69619dc2d67665f5db415281",
+      "split": "train",
+      "row_number": 2432,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ff90860736f51c8ef5562722f772e011",
+      "split": "train",
+      "row_number": 2388,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "55e1eb92d23d7e065e2649307344089f",
+      "split": "train",
+      "row_number": 1301,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "660da2e6049d18ef685bcfa736925e93",
+      "split": "train",
+      "row_number": 2165,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ed4586822f9430e37c39c04970300b84",
+      "split": "train",
+      "row_number": 2841,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "2052f2aefa007725384c8cb4dee2d99f",
+      "split": "train",
+      "row_number": 1256,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "eaea58201ef0790aca42994542a96393",
+      "split": "train",
+      "row_number": 2053,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c5f6323010281d21f8ef92d25f5f71a7",
+      "split": "train",
+      "row_number": 1369,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    },
+    {
+      "source_id": "56c412a1e8e653837e01c24a1738be7e",
+      "split": "train",
+      "row_number": 2336,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "f6c030ca927d80f2fa94d44a8321b370",
+      "split": "train",
+      "row_number": 1640,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "c301e4e779020b5b9e2074cc8a71cea5",
+      "split": "train",
+      "row_number": 1815,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "0631eac270a7a7986f4a24635d6f1aba",
+      "split": "train",
+      "row_number": 1924,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "ec8b897cae7626b1129c2f2b91d0592c",
+      "split": "train",
+      "row_number": 2214,
+      "chosen_score": 1.0,
+      "rejected_score": 0.5,
+      "matched": true
+    },
+    {
+      "source_id": "13d5e1407092c082027d8d453f8aeedd",
+      "split": "train",
+      "row_number": 2160,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "1bb8b8f6e095f2565f1884e842d65640",
+      "split": "train",
+      "row_number": 1211,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "09362974407a1679d34fd28d3b013391",
+      "split": "train",
+      "row_number": 3072,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "022422d5db3fa9045421a631ee325c5c",
+      "split": "train",
+      "row_number": 1616,
+      "chosen_score": 1.0,
+      "rejected_score": 0.9,
+      "matched": true
+    },
+    {
+      "source_id": "77144c6c24ea724f1691dc97e3dbcbfb",
+      "split": "train",
+      "row_number": 2909,
+      "chosen_score": 1.0,
+      "rejected_score": 0.6,
+      "matched": true
+    },
+    {
+      "source_id": "f4ff108cb3a3b52812b76237bc73bb36",
+      "split": "train",
+      "row_number": 840,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "fb9f47b06cc8cb4da1f779edae134bb5",
+      "split": "train",
+      "row_number": 2313,
+      "chosen_score": 1.0,
+      "rejected_score": 0.7,
+      "matched": true
+    },
+    {
+      "source_id": "018c26bf59bf27a0af01e7b0d04adcc5",
+      "split": "train",
+      "row_number": 1291,
+      "chosen_score": 1.0,
+      "rejected_score": 0.8,
+      "matched": true
+    }
+  ],
+  "sample_matched": 100,
+  "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+  "docker_image_matches_export": true,
+  "hashes": {
+    "data/preference/train.jsonl": "3296d9cfcc2198684a2f8d715987d9723d79e571243f03a067d4330ad00e330c",
+    "data/preference/valid.jsonl": "45eccf6ed3419edbb19b4cafb6f7116105f47c99cfde06b818690e16f1927f8b",
+    "data/preference/provenance.jsonl": "8ff36d66700f8058b595ee11c50138146e34c03ee74fd3b4529098032cb47257",
+    "data/preference.lock.json": "d19b087d62d01c38f21ca99aabd6a3c3ad236105a43bef64b2eb698f382f8214",
+    "eval.jsonl": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+    "scripts/audit_dpo_data.py": "9c4fade94ed7534c883f642e3fb26622d9d9ba34b76d9d8f95fff6770e875fde"
+  },
+  "reference_check": {
+    "reference_commit": "f8b8c0f49dc92a430bae41585f9d467d3618fe2f",
+    "reference_url": "https://raw.githubusercontent.com/eric-mitchell/direct-preference-optimization/f8b8c0f49dc92a430bae41585f9d467d3618fe2f/trainers.py",
+    "reference_sha256": "96615b95a9fa52fd7c25b3c24b5e35998906e62bb564bee08022fb7aa1ce298a",
+    "cases": 40,
+    "passed": true,
+    "differences": {
+      "logprob_max_error": 3.814697265625e-06,
+      "logprob_gradient_max_error": 0,
+      "loss_max_error": 0,
+      "loss_gradient_max_error": 0
+    },
+    "scope": "CPU float32 synthetic logits; no actual model forward or optimizer check"
+  }
+}

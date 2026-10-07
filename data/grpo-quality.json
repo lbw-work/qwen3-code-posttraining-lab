@@ -1,0 +1,247 @@
+{
+  "profile": "grpo-quality-audit-v1",
+  "input_lock_sha256": "035cc12ac97c6749323d4fcfd68ec827b2f93dd6249455d339e70e3f97ddc2ed",
+  "audit_sha256": "3505eb1a65bf16da24724d689481bddc1ad94edb9f9aff50d32b8d9058dde702",
+  "script_sha256": "e17645b6b0b12c0693c77480ec4088081b9995d4c2a29f6f713a08081e5f314d",
+  "sft_tokenizer_sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+  "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+  "counts": {
+    "train_checked": 2048,
+    "train_accepted": 2018,
+    "matched_examples": 2318,
+    "parsed_examples": 1662,
+    "mutants_executed": 4137,
+    "mutants_failed_tests": 3664,
+    "questions_with_no_mutation": 510,
+    "reference_or_example_failed": 5,
+    "all_checked_mutants_survive": 27,
+    "constant_output_passes_all": 1,
+    "valid_checked": 128,
+    "valid_accepted": 125
+  },
+  "limitations": [
+    "测试通过不证明所有输入正确；无法解析的示例未验证。",
+    "未通过变异不一定表示错误；保守排除两个以上变异均全过的题会排除一些等价变异。",
+    "验证题来自原 SFT valid；只用于本阶段模型选择，不能冒充独立最终测试。"
+  ],
+  "finalization": {
+    "counts": {
+      "train": 2005,
+      "valid": 124
+    },
+    "entry_checks": {
+      "corrected_helper_entry": 26,
+      "train_multiple_public_entries": 5,
+      "valid_multiple_public_entries": 1,
+      "train_actual_entry_in_valid": 6,
+      "train_actual_entry_cap": 1
+    },
+    "exclusions": [
+      {
+        "source_id": "925e8e4e4dcbfbb270628df6b3230b95",
+        "split": "train",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "c490dfd957c533071a056b3ded990216",
+        "split": "train",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "e19ef6902549a820976007c6143f135c",
+        "split": "train",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "924d73f3ba79e66b9d5e05063b2acb75",
+        "split": "train",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "e02ebe93f87dd83f63d5907fdb46d6ac",
+        "split": "train",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "ccfe2e2328d96db902b48247e7e676f9",
+        "split": "valid",
+        "reason": "multiple_public_entries"
+      },
+      {
+        "source_id": "6d4584b2dd27043bafbc9bff3184045b",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      },
+      {
+        "source_id": "a059f94ad4d56e6dc7363253e1cc54d7",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      },
+      {
+        "source_id": "727944ada6f6d5fdb5068e2730266898",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      },
+      {
+        "source_id": "37cc59f6ed473caf301c2ca71e2a0e3c",
+        "split": "train",
+        "reason": "actual_entry_cap"
+      },
+      {
+        "source_id": "f382d93fd54c35e65d889499f8bdcb3a",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      },
+      {
+        "source_id": "50d833aae012bf4b42e74afe10e569e1",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      },
+      {
+        "source_id": "c3459306c6f3ecfc38a6aa2c5ed8d54a",
+        "split": "train",
+        "reason": "actual_entry_in_valid"
+      }
+    ],
+    "entry_corrections": [
+      {
+        "source_id": "f877967da8eb9d26c8f3c640642599d3",
+        "old": "partition",
+        "actual": "find_median"
+      },
+      {
+        "source_id": "6d4584b2dd27043bafbc9bff3184045b",
+        "old": "fibonacci_memoization",
+        "actual": "fibonacci_sequence"
+      },
+      {
+        "source_id": "8c5eb9e7b42d4ffa1f978556f329c9b0",
+        "old": "flatten_authors",
+        "actual": "book_authors"
+      },
+      {
+        "source_id": "361a9ea5d274be32e233e3e84f26844f",
+        "old": "get_union_set",
+        "actual": "count_unique_elements"
+      },
+      {
+        "source_id": "83a14380e84fa9f6a37c3289b96022ee",
+        "old": "g",
+        "actual": "test_g"
+      },
+      {
+        "source_id": "14ca4408140e086fd982145b3b91c566",
+        "old": "insertion_sort",
+        "actual": "optimize_sort"
+      },
+      {
+        "source_id": "a059f94ad4d56e6dc7363253e1cc54d7",
+        "old": "fibonacci_memo",
+        "actual": "fibonacci_sequence"
+      },
+      {
+        "source_id": "25177c1989224d2083bb2bad9d4fc32c",
+        "old": "detect_encoding",
+        "actual": "detect_encoding_nested"
+      },
+      {
+        "source_id": "727944ada6f6d5fdb5068e2730266898",
+        "old": "matrix_multiply",
+        "actual": "fibonacci"
+      },
+      {
+        "source_id": "60c53ee1b31c76c960dfa3c18ab5f30c",
+        "old": "custom_uppercase",
+        "actual": "first_n_uppercase"
+      },
+      {
+        "source_id": "596d23e9bc989671a335f868cdfd891e",
+        "old": "gcd",
+        "actual": "lcm"
+      },
+      {
+        "source_id": "b3ec4ec40aa850fb1fba0a43f3cf2795",
+        "old": "fen_sum",
+        "actual": "range_sum"
+      },
+      {
+        "source_id": "228e18f1fe60d90cd9303e079be8ad57",
+        "old": "merge_sorted_lists",
+        "actual": "merge_and_sort"
+      },
+      {
+        "source_id": "cd1de3a4770ca54d8ef69c5feb211689",
+        "old": "levenshtein_distance",
+        "actual": "closest_match"
+      },
+      {
+        "source_id": "6212d24048d724b54b9d7f628b509677",
+        "old": "insert_at_correct_position",
+        "actual": "sort_list_with_insertion"
+      },
+      {
+        "source_id": "f382d93fd54c35e65d889499f8bdcb3a",
+        "old": "memoize",
+        "actual": "factorial"
+      },
+      {
+        "source_id": "234057022bd9b6599a83ea903741d0ca",
+        "old": "flatten_structure",
+        "actual": "calculate_sum"
+      },
+      {
+        "source_id": "50d833aae012bf4b42e74afe10e569e1",
+        "old": "distance",
+        "actual": "optimize_route"
+      },
+      {
+        "source_id": "c3459306c6f3ecfc38a6aa2c5ed8d54a",
+        "old": "matrix_multiply",
+        "actual": "calculate_fibonacci"
+      },
+      {
+        "source_id": "4d499c7ec13f00d057d0e7d72b3c3e90",
+        "old": "flatten",
+        "actual": "merge_and_remove_duplicates"
+      },
+      {
+        "source_id": "f6621c4043a444ab23226b996b676efb",
+        "old": "merge_sort",
+        "actual": "optimize_sort"
+      },
+      {
+        "source_id": "09a084edaff356401f7a0ab843bdc6a1",
+        "old": "lcm",
+        "actual": "find_smallest_divisible"
+      },
+      {
+        "source_id": "f5e49004f84882ffffa144d5b873f6ae",
+        "old": "lcm",
+        "actual": "lcm_of_list"
+      },
+      {
+        "source_id": "89139242e68135acffcddab9d5f0bc92",
+        "old": "is_punctuation",
+        "actual": "clean_sentences"
+      },
+      {
+        "source_id": "faa19af25b509bc83f176f3a167c02c3",
+        "old": "euclidean_distance",
+        "actual": "optimize_route"
+      },
+      {
+        "source_id": "0238e569a3aef862c8e65c624546ad9b",
+        "old": "rotate_grid",
+        "actual": "check_grid_equivalence"
+      }
+    ],
+    "semantic_exclusions": [
+      {
+        "source_id": "b738c69504b40ae2e733a0e88f6424b2",
+        "reason": "题意要求把代码片段分类为 functions/classes/modules/packages，测试却要求实现 calculate_sum 求和。"
+      }
+    ],
+    "finalizer_sha256": "f69293a4c64df418bcc83334a758f0ca56c8d3ce988314ea0282c16327e1b750"
+  },
+  "execution_script_file": "data/raw/grpo-preparation/quality-script-v1.py"
+}

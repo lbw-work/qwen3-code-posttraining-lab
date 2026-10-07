@@ -12,7 +12,7 @@ import pyarrow.parquet as parquet
 from huggingface_hub import hf_hub_download
 from transformers import AutoTokenizer
 
-from generate_eval import ROOT, sha256, verified_tasks
+from qwen_posttrain.artifacts import ROOT, sha256, verified_tasks
 
 
 REPO = "nvidia/OpenCodeInstruct"

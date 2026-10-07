@@ -1,0 +1,20 @@
+{
+  "profile": "grpo-targeted-semantic-review-v1",
+  "date": "2026-10-07",
+  "source_initial_lock_sha256": "035cc12ac97c6749323d4fcfd68ec827b2f93dd6249455d339e70e3f97ddc2ed",
+  "quality_audit_sha256": "3505eb1a65bf16da24724d689481bddc1ad94edb9f9aff50d32b8d9058dde702",
+  "scanned_train": 2006,
+  "scanned_valid": 124,
+  "scope": "针对代码分类/解释类题意与函数执行测试错配的规则扫描及命中记录人工复核；不是全量逐题语义正确性证明。",
+  "exclusions": [
+    {
+      "source_id": "b738c69504b40ae2e733a0e88f6424b2",
+      "reason": "题意要求把代码片段分类为 functions/classes/modules/packages，测试却要求实现 calculate_sum 求和。"
+    }
+  ],
+  "reviewed_and_retained": [
+    "dcee654533d88707334d12890e60cd2f",
+    "dc6f91de19bfd7b7370bc1e331d7a186"
+  ],
+  "retention_reason": "两题明确要求修正并实现求和函数，与函数测试的目标一致。"
+}

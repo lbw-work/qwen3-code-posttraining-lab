@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pyarrow.parquet as parquet
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 def load_sft_rows(path: Path) -> dict[str, dict]:

@@ -6,6 +6,7 @@ import math
 import random
 import shutil
 import time
+from pathlib import Path
 
 import torch
 import torch.nn.functional as F
@@ -13,9 +14,9 @@ from datasets import load_dataset
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 from train_common import locked_jsonl, new_run, save_meta, sft_adapter
-from train_ppo import action_logprobs
+from qwen_posttrain.policy import action_logprobs
 
 
 BETA = 0.1
@@ -108,6 +109,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sft-run", required=True)
     parser.add_argument("--run-id")
+    parser.add_argument("--preference-dir", type=Path, default=ROOT / "data" / "preference",
+                        help="冻结的偏好数据目录；默认 data/preference（DPO v2）")
     parser.add_argument("--max-steps", type=int, default=-1)
     parser.add_argument("--max-hours", type=float, default=4)
     args = parser.parse_args()
@@ -117,7 +120,11 @@ def main() -> None:
         parser.error("DPO 正式训练要求一张支持 bf16 的 CUDA 显卡")
 
     adapter = sft_adapter(ROOT / args.sft_run)
-    train_file, valid_file, lock = locked_jsonl(ROOT / "data" / "preference", "preference")
+    preference_dir = args.preference_dir.resolve()
+    if preference_dir.parent != (ROOT / "data").resolve():
+        parser.error("偏好数据目录必须位于项目 data/ 下")
+    # 数据目录名对应 data/<目录名>.lock.json；读取前核验数据与评测集哈希。
+    train_file, valid_file, lock = locked_jsonl(preference_dir, preference_dir.name)
     data = load_dataset("json", data_files={"train": str(train_file), "valid": str(valid_file)})
     train_rows, valid_rows = data["train"], data["valid"]
     if not train_rows or not valid_rows:
@@ -186,7 +193,8 @@ def main() -> None:
     save_meta(
         run, stage="dpo", implementation="manual", sft_run=str(adapter.parent),
         sft_adapter_config_sha256=sha256(adapter / "adapter_config.json"),
-        preference_lock_sha256=sha256(ROOT / "data" / "preference.lock.json"),
+        preference_lock_sha256=sha256(preference_dir.with_suffix(".lock.json")),
+        preference_dir=str(preference_dir),
         train_sha256=lock["train_sha256"], valid_sha256=lock["valid_sha256"],
         eval_sha256=lock["eval_sha256"], best_checkpoint=str(best_path),
         best_eval_loss=best_loss, global_step=completed_steps,

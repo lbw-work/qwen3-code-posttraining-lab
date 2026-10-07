@@ -1,0 +1,211 @@
+{
+  "profile": "execution-verified-functions-v1",
+  "preference_lock_sha256": "d19b087d62d01c38f21ca99aabd6a3c3ad236105a43bef64b2eb698f382f8214",
+  "counts": {
+    "source_rows": 5000,
+    "train": 3212,
+    "engineering_prompt": 136,
+    "valid": 153,
+    "prompt_example_failed": 142,
+    "duplicate_chosen_code": 607,
+    "function_name_cap": 744,
+    "manual_review_excluded": 6
+  },
+  "execution_counts": {
+    "scanned_sft_train": 23312,
+    "no_usable_mutation": 12422,
+    "eval_overlap": 2527,
+    "executed_questions": 8300,
+    "executed_candidates": 41026,
+    "no_partial_failure_negative": 3288,
+    "accepted": 5000,
+    "insufficient_tests": 63,
+    "chosen_failed_local_tests": 2
+  },
+  "test_counts": {
+    "min": 10,
+    "median": 10,
+    "max": 10
+  },
+  "rejected_scores": {
+    "min": 0.5,
+    "median": 0.8,
+    "max": 0.9,
+    "distribution": {
+      "0.8": 771,
+      "0.9": 1326,
+      "0.5": 375,
+      "0.6": 375,
+      "0.7": 518
+    }
+  },
+  "mutation_counts": {
+    "False -> True": 261,
+    "< -> <=": 258,
+    "1 -> 0": 615,
+    "0 -> 1": 913,
+    "!= -> ==": 12,
+    "> -> >=": 197,
+    "True -> False": 81,
+    "- -> +": 243,
+    "and -> or": 124,
+    "or -> and": 96,
+    "<= -> <": 183,
+    "* -> +": 57,
+    "+ -> -": 181,
+    "== -> !=": 81,
+    ">= -> >": 63
+  },
+  "checks": {
+    "raw_source_and_single_token_mutation_all_rows": true,
+    "train_valid_hashes_and_eval_lock": true,
+    "script_and_provenance_hashes": true,
+    "distinct_prompt_and_chosen_ast": true,
+    "function_name_cap": true,
+    "previous_validation_and_eval_text_name_filters": true,
+    "schema_ast_token_limits_all_rows": true
+  },
+  "sample_reexecution": {
+    "pairs": 10,
+    "codes": 20,
+    "matched": true,
+    "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+    "results": [
+      {
+        "source_id": "9f16ab94c6d62d8ce0becc4da7b5b692",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.7,
+        "mutation": {
+          "line": 13,
+          "column": 16,
+          "old": "1",
+          "new": "0"
+        }
+      },
+      {
+        "source_id": "79163da335eb8dedad9f9273ebd30cfa",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.9,
+        "mutation": {
+          "line": 8,
+          "column": 22,
+          "old": "1",
+          "new": "0"
+        }
+      },
+      {
+        "source_id": "e9a1ad811558f2d45b6f2654b62f8188",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.5,
+        "mutation": {
+          "line": 12,
+          "column": 14,
+          "old": "1",
+          "new": "0"
+        }
+      },
+      {
+        "source_id": "c4f24cc00a33107e1675273f9ee56a05",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.7,
+        "mutation": {
+          "line": 18,
+          "column": 23,
+          "old": "False",
+          "new": "True"
+        }
+      },
+      {
+        "source_id": "9b19402dbdf2e0af07dd2c682e29d100",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.5,
+        "mutation": {
+          "line": 28,
+          "column": 39,
+          "old": "1",
+          "new": "0"
+        }
+      },
+      {
+        "source_id": "c93ca4c00ce8a420bec42cfaa9384f0c",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.9,
+        "mutation": {
+          "line": 29,
+          "column": 55,
+          "old": "-",
+          "new": "+"
+        }
+      },
+      {
+        "source_id": "fffbe6a392231d923ee870eca1ce32ef",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.9,
+        "mutation": {
+          "line": 12,
+          "column": 50,
+          "old": ">",
+          "new": ">="
+        }
+      },
+      {
+        "source_id": "70da705eb8ee8a927167b6901091d4ff",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.8,
+        "mutation": {
+          "line": 10,
+          "column": 16,
+          "old": "False",
+          "new": "True"
+        }
+      },
+      {
+        "source_id": "22d3e698b7e7a5ed8a7b0a476a2cf34f",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.8,
+        "mutation": {
+          "line": 12,
+          "column": 22,
+          "old": ">=",
+          "new": ">"
+        }
+      },
+      {
+        "source_id": "519bf75581a4ad8dd2bc5ba745541303",
+        "test_count": 10,
+        "chosen_score": 1.0,
+        "rejected_score": 0.9,
+        "mutation": {
+          "line": 14,
+          "column": 11,
+          "old": "<",
+          "new": "<="
+        }
+      }
+    ]
+  },
+  "limits": [
+    "Only supplied training tests are checked; not proof of full correctness.",
+    "Text and function-name filters cannot exclude all semantic benchmark overlap.",
+    "DPO validation questions have been seen in SFT training.",
+    "Rule-mutated negatives; not model-generated responses."
+  ],
+  "source_name": "nvidia/OpenCodeInstruct@8f3ba5bafe4d6e8db46082cf7ae6741bc370604d+execution-mutations-v2",
+  "example_audit": {
+    "checked_examples": 3381,
+    "failed_examples": 151,
+    "excluded_source_ids": 144,
+    "formal_rows_excluded": 142,
+    "audit_sha256": "b9d34390dbaa45d373492d1c8f748a261b8b0d180445e660d8d8a4179f81eda7"
+  },
+  "max_pairs_per_function_name": 10
+}

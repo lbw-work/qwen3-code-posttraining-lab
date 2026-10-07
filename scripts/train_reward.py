@@ -8,7 +8,7 @@ from peft import LoraConfig
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from trl import RewardConfig, RewardTrainer
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 from train_common import TimeBudget, locked_jsonl, new_run, save_meta
 
 
@@ -59,9 +59,9 @@ def main() -> None:
         learning_rate=1e-4,
         max_length=1024,
         eval_strategy="steps",
-        eval_steps=200,
+        eval_steps=50,
         save_strategy="steps",
-        save_steps=200,
+        save_steps=50,
         save_total_limit=2,
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",

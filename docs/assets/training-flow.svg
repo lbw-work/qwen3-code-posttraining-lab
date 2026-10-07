@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="500" viewBox="0 0 1120 500" role="img" aria-labelledby="flow-title flow-desc" font-family="Arial, Helvetica, sans-serif">
+<title id="flow-title">Training branches and unified evaluation</title>
+<desc id="flow-desc">Base branches into Full SFT and LoRA SFT. DPO, PPO and GRPO start from the same LoRA SFT. A separate reward model trained from Base scores PPO. All six stages use the same frozen evaluation.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#94a3b8"/></marker></defs>
+<rect width="1120" height="500" rx="18" fill="#f8fafc"/>
+<text x="32" y="37" font-size="20" font-weight="700" fill="#0f172a">One base. Shared SFT start. Three optimization routes.</text>
+<path d="M200 227H230V112H268" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M200 227H268" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M200 227H230V390H268" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M458 227H495V156H565" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M458 227H565" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M458 227H495V300H565" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M458 112H880V209H926" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M810 156H852V227H926" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M810 227H926" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M810 300H880V250H926" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M458 390H535V245H565" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5 4"/>
+<path d="M117 266V447H907V284H926" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="5 4"/>
+<rect x="32" y="188" width="168" height="78" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="32" y="200" width="4" height="54" rx="2" fill="#64748b"/>
+<text x="50" y="216" font-size="16" font-weight="700" fill="#0f172a">Qwen3 Base</text>
+<text x="50" y="237" font-size="12" fill="#64748b">1.7B · locked revision</text>
+<rect x="268" y="77" width="190" height="70" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="268" y="89" width="4" height="46" rx="2" fill="#2563eb"/>
+<text x="286" y="105" font-size="16" font-weight="700" fill="#0f172a">Full SFT</text>
+<text x="286" y="126" font-size="12" fill="#64748b">All parameters</text>
+<rect x="268" y="192" width="190" height="70" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="268" y="204" width="4" height="46" rx="2" fill="#0d9488"/>
+<text x="286" y="220" font-size="16" font-weight="700" fill="#0f172a">LoRA SFT</text>
+<text x="286" y="241" font-size="12" fill="#64748b">Shared policy starting point</text>
+<rect x="268" y="355" width="190" height="70" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="268" y="367" width="4" height="46" rx="2" fill="#d97706"/>
+<text x="286" y="383" font-size="16" font-weight="700" fill="#0f172a">Reward Model</text>
+<text x="286" y="404" font-size="12" fill="#64748b">Base + preference pairs</text>
+<rect x="565" y="122" width="245" height="68" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="565" y="134" width="4" height="44" rx="2" fill="#7c3aed"/>
+<text x="583" y="150" font-size="16" font-weight="700" fill="#0f172a">DPO</text>
+<text x="583" y="171" font-size="12" fill="#64748b">Chosen / rejected + reference</text>
+<rect x="565" y="193" width="245" height="68" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="565" y="205" width="4" height="44" rx="2" fill="#d97706"/>
+<text x="583" y="221" font-size="16" font-weight="700" fill="#0f172a">PPO</text>
+<text x="583" y="242" font-size="12" fill="#64748b">Learned reward + KL + GAE</text>
+<rect x="565" y="266" width="245" height="68" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="565" y="278" width="4" height="44" rx="2" fill="#e11d48"/>
+<text x="583" y="294" font-size="16" font-weight="700" fill="#0f172a">GRPO</text>
+<text x="583" y="315" font-size="12" fill="#64748b">Group-relative execution reward</text>
+<rect x="926" y="180" width="162" height="126" rx="12" fill="#ffffff" stroke="#e2e8f0"/>
+<rect x="926" y="192" width="4" height="102" rx="2" fill="#0d9488"/>
+<text x="944" y="208" font-size="16" font-weight="700" fill="#0f172a">Fixed evaluation</text>
+<text x="944" y="229" font-size="12" fill="#64748b">164 HumanEval+</text>
+<text x="944" y="247" font-size="12" fill="#64748b">378 MBPP+</text>
+<text x="944" y="265" font-size="12" fill="#64748b">Greedy · 512 tokens</text>
+<text x="468" y="380" font-size="12" fill="#b45309">scores PPO</text>
+<text x="133" y="438" font-size="12" fill="#64748b">Base baseline</text>
+<text x="32" y="479" font-size="12" fill="#64748b">Training-source tests supply GRPO rewards. Public hidden evaluation tests never select checkpoints.</text>
+</svg>

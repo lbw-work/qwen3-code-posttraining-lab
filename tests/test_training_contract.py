@@ -8,13 +8,54 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from prepare_sft import eval_ngrams, overlaps_eval  # noqa: E402
-from prepare_preference import python_code  # noqa: E402
+from prepare_preference import function_pair_reason, overlaps_eval_function, python_code  # noqa: E402
 from train_dpo import dpo_loss  # noqa: E402
 from train_grpo import grpo_loss, group_advantages  # noqa: E402
-from train_ppo import action_logprobs, gae, ppo_loss  # noqa: E402
+from qwen_posttrain.policy import action_logprobs, prompt_order
+from train_ppo import gae, ppo_loss  # noqa: E402
+from export_verified_preference import mutations  # noqa: E402
+from audit_preference_examples import example_test  # noqa: E402
 
 
 class TrainingContractTest(unittest.TestCase):
+    def test_preference_prompt_example_becomes_executable_assertion(self):
+        row = {"input": "Return f(a, b).", "chosen": "def f(a, b): return a + b\n"}
+        self.assertEqual(example_test(row, "3 5", "8"), "assert f(3, 5) == 8")
+        self.assertIsNone(example_test({**row, "input": "Return any order."}, "3 5", "8"))
+
+    def test_ppo_prompt_order_covers_all_questions_before_repeating(self):
+        order = prompt_order(5, 42)
+        self.assertEqual(set(next(order) for _ in range(5)), set(range(5)))
+        self.assertEqual(set(next(order) for _ in range(5)), set(range(5)))
+
+    def test_preference_mutates_code_tokens_only(self):
+        original = 'def total(xs):\n    """0 + 1 >= 0"""\n    # 0 + 1 >= 0\n    return sum(xs) + 1\n'
+        variants = mutations(original, 42, 6)
+        self.assertTrue(variants)
+        self.assertEqual(variants, mutations(original, 42, 6))
+        for code, change in variants:
+            self.assertIn('"""0 + 1 >= 0"""', code)
+            self.assertIn('# 0 + 1 >= 0', code)
+            self.assertEqual(change['line'], 4)
+            self.assertNotEqual(code, original)
+        self.assertFalse(mutations('def f(n):\n    while n > 0:\n        n -= 1\n    return n\n', 42, 6))
+
+    def test_algorithm_preference_filters(self):
+        good = "def total(xs):\n    return sum(xs)\n"
+        bad = "def total(xs):\n    return sum(xs[:-1])\n"
+        self.assertIsNone(function_pair_reason("Return the sum of a list.", good, bad))
+        self.assertEqual(function_pair_reason("Read from standard input.", good, bad), "program_or_embedded_code_prompt")
+        self.assertEqual(function_pair_reason("Calculate a discount for a product.", good, bad), "engineering_prompt")
+        self.assertEqual(function_pair_reason("Adjust optimization_level and chunk_size.", good, bad), "engineering_prompt")
+        self.assertEqual(function_pair_reason("Sum a list", good, good + "# changed comment\n"), "same_code_ast")
+        self.assertEqual(function_pair_reason("Sum a list", good, "def other(xs): return 0"), "different_function_interface")
+        self.assertEqual(function_pair_reason("Sum a list", "import pandas\n" + good, bad), "external_dependency")
+        self.assertEqual(function_pair_reason("Sum a list", good, "def total(xs): return int(input())"), "io_or_dynamic_execution")
+        self.assertEqual(function_pair_reason("Sum a list", good, "def total(xs): return expected + sum(xs)"), "undefined_global")
+        self.assertIsNone(function_pair_reason("Sum a list", "def total(xs):\n    def inner(x): return x + len(xs)\n    return sum(inner(x) for x in xs)", bad))
+        self.assertTrue(overlaps_eval_function("def hexKey(s): return len(s)", "def hexKey(s): return 0", {"hexkey"}))
+        self.assertFalse(overlaps_eval_function(good, bad, {"hexkey"}))
+
     def test_preference_requires_code_only(self):
         self.assertEqual(python_code("\ufeff```python\ndef f(x):\n    return x\n```"), "def f(x):\n    return x\n")
         self.assertIsNone(python_code("Here is a solution:\ndef f(x): return x"))

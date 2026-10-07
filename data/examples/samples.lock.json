@@ -30,9 +30,27 @@
       ]
     },
     "preference": {
-      "available": false,
+      "available": true,
       "source": "data/preference/train.jsonl",
-      "reason": "尚未冻结；请先完成对应的数据准备脚本"
+      "source_sha256": "3296d9cfcc2198684a2f8d715987d9723d79e571243f03a067d4330ad00e330c",
+      "sample": "data/examples/preference.sample.jsonl",
+      "sample_sha256": "5026525bb9d6b73c0ac59b01840d79962425e58a0dde53ae5a0171f1a468cdcc",
+      "schema": [
+        "chosen",
+        "prompt",
+        "rejected"
+      ]
+    },
+    "ppo": {
+      "available": true,
+      "source": "data/ppo/train.jsonl",
+      "source_sha256": "ca5c4b9a1b61383bbc73995a6fd7c048a4353e3b097fd3391aaf3a91eec3e568",
+      "sample": "data/examples/ppo.sample.jsonl",
+      "sample_sha256": "83120ac04bfb332ea3bfb4c068cf26da2fdf127efb8c4e4103763b6030ecf59d",
+      "schema": [
+        "prompt",
+        "source_id"
+      ]
     },
     "rl": {
       "available": true,
@@ -45,6 +63,19 @@
         "source_id",
         "tests"
       ]
+    },
+    "grpo": {
+      "available": true,
+      "source": "data/grpo/train.jsonl",
+      "source_sha256": "43fa3353ceef3af53d20b4b0680b789d7ad60cdebc85e4e35b2d18fa7af6b91d",
+      "sample": "data/examples/grpo.sample.jsonl",
+      "sample_sha256": "c6b01667d241b52efb9aca8a5467193764506a5f6c9700ce88928cb060871cad",
+      "schema": [
+        "entry_point",
+        "prompt",
+        "source_id",
+        "tests"
+      ]
     }
   },
   "stages": {
@@ -53,7 +84,7 @@
     "lora_sft": "sft",
     "dpo": "preference",
     "reward_model": "preference",
-    "ppo": "rl",
-    "grpo": "rl"
+    "ppo": "ppo",
+    "grpo": "grpo"
   }
 }

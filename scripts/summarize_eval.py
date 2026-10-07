@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 def main() -> None:

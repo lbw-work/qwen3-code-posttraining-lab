@@ -7,7 +7,7 @@ from pathlib import Path
 
 from transformers import TrainerCallback
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 def new_run(stage: str, run_id: str | None) -> Path:
