@@ -1,0 +1,70 @@
+{
+  "source_name": "nvidia/OpenCodeInstruct@8f3ba5bafe4d6e8db46082cf7ae6741bc370604d+execution-mutations-v2",
+  "source_sha256": "ea65236df9c7154ad2c0fd7152522d953e1e5de5321c124bac3fbea5f4b54194",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "counts": {
+    "source_rows": 5000,
+    "train": 3212,
+    "engineering_prompt": 136,
+    "valid": 153,
+    "prompt_example_failed": 142,
+    "duplicate_chosen_code": 607,
+    "function_name_cap": 744,
+    "manual_review_excluded": 6
+  },
+  "train_sha256": "3296d9cfcc2198684a2f8d715987d9723d79e571243f03a067d4330ad00e330c",
+  "valid_sha256": "45eccf6ed3419edbb19b4cafb6f7116105f47c99cfde06b818690e16f1927f8b",
+  "profile": "execution-verified-functions-v1",
+  "source_counts": {
+    "OPENCODEINSTRUCT_EXECUTION": 3365
+  },
+  "label_validation": "Docker verified supplied training tests; not proof of full correctness",
+  "prepare_script_sha256": "c6a47fd09624d0fea53281a1302210f93db39e8871538f2f4b167611603bd06d",
+  "previous_validation_sha256": {
+    "data/sft/valid.jsonl": "87828d01908a247a4a45185f4ac1abf0dc8553721c0e64bf3909b29e4756ed0f",
+    "data/rl/valid.jsonl": "c42f7684b789d56cda53aca59e7337c5b5f2f11c677b78c52487152df59fe781"
+  },
+  "tokenizer_source": {
+    "repo_id": "Qwen/Qwen3-1.7B-Base",
+    "revision": "ea980cb0a6c2ae4b936e82123acc929f1cec04c1",
+    "path": "models/base"
+  },
+  "max_sequence_tokens": 1024,
+  "max_answer_tokens": 512,
+  "max_pairs_per_function_name": 10,
+  "split_salt": "preference-v1:",
+  "execution_export": {
+    "profile": "execution-verified-functions-v1",
+    "counts": {
+      "scanned_sft_train": 23312,
+      "no_usable_mutation": 12422,
+      "eval_overlap": 2527,
+      "executed_questions": 8300,
+      "executed_candidates": 41026,
+      "no_partial_failure_negative": 3288,
+      "accepted": 5000,
+      "insufficient_tests": 63,
+      "chosen_failed_local_tests": 2
+    },
+    "seed": 42,
+    "repo": "nvidia/OpenCodeInstruct",
+    "revision": "8f3ba5bafe4d6e8db46082cf7ae6741bc370604d",
+    "source_file": "data/train-00000-of-00050.parquet",
+    "source_sha256": "342757e0c6b706c8f68cf0a867ead5c417d0273726453dbcfc934f5c3c6ca891",
+    "sft_train_sha256": "df2220b1bf223aa734b22a8e559eea19448c758b75591909c6552c199d5af775",
+    "rl_train_sha256": "7546c589102af12b59df0dbe457c14435dbfa1f79239afc31ab918f284ad3b7b",
+    "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+    "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+    "export_sha256": "ea65236df9c7154ad2c0fd7152522d953e1e5de5321c124bac3fbea5f4b54194",
+    "builder_sha256": "196e49c4483d13e4077ca7fb3debcb17ee2d5ed84af3fa21a7b1b535ae2cc3a8",
+    "worker_sha256": "b731ddcaa89b0a2d2ba26384c93c5f3c861c39d2b3176b14640dd7613afa1670",
+    "min_rejected_score": 0.5,
+    "mutations_per_question": 6,
+    "min_distinct_tests": 5,
+    "verification": "chosen passes all supplied training tests; rejected passes some and fails some"
+  },
+  "execution_export_lock_sha256": "abc37dfc0ba97b922fca6ed6c2634d2a2ac02173c73bda51adce4d6e007125b7",
+  "manual_review_sha256": "fa103d9b912abee1452fe53918acae8fb32cac34fb57784dd5e90b1d4e1507f4",
+  "example_audit_sha256": "b9d34390dbaa45d373492d1c8f748a261b8b0d180445e660d8d8a4179f81eda7",
+  "provenance_sha256": "8ff36d66700f8058b595ee11c50138146e34c03ee74fd3b4529098032cb47257"
+}

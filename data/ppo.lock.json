@@ -1,0 +1,21 @@
+{
+  "profile": "ppo-function-prompts-v1",
+  "preference_lock_sha256": "d19b087d62d01c38f21ca99aabd6a3c3ad236105a43bef64b2eb698f382f8214",
+  "rl_lock_sha256": "c42da48e89786b5884c035539803fbfa3c831c97d9362264939ffc2d4b6bb4a2",
+  "preference_train_sha256": "3296d9cfcc2198684a2f8d715987d9723d79e571243f03a067d4330ad00e330c",
+  "preference_valid_sha256": "45eccf6ed3419edbb19b4cafb6f7116105f47c99cfde06b818690e16f1927f8b",
+  "rl_train_sha256": "7546c589102af12b59df0dbe457c14435dbfa1f79239afc31ab918f284ad3b7b",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "max_prompt_tokens": 512,
+  "counts": {
+    "train": 3201,
+    "valid": 153,
+    "over_prompt_limit": {
+      "train": 11,
+      "valid": 0
+    }
+  },
+  "train_sha256": "ca5c4b9a1b61383bbc73995a6fd7c048a4353e3b097fd3391aaf3a91eec3e568",
+  "valid_sha256": "0ab8914d1a01bbf4870f0f744d0e48d105bc2c13e613db6d84c03b3050207622",
+  "script_sha256": "e3958704679f2594b4b6cc0f82e382874e527c78623b400d14635751e67f20c4"
+}

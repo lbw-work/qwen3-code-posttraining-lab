@@ -1,0 +1,18 @@
+{
+  "stage": "ppo",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "suites": {
+    "humaneval": {
+      "passed": 72,
+      "total": 164,
+      "pass_at_1": 0.43902439024390244,
+      "result_sha256": "3a64e004c0d2519dae3c10bae3bb036cdcef92be78d5fb75b167e56511f2b026"
+    },
+    "mbpp": {
+      "passed": 231,
+      "total": 378,
+      "pass_at_1": 0.6111111111111112,
+      "result_sha256": "ef1782188144efb433c7768f9cf4e04b86581f8bb9e09933e9a0b1240bcdcf22"
+    }
+  }
+}

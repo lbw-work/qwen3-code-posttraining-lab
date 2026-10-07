@@ -1,0 +1,18 @@
+{
+  "stage": "grpo",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "suites": {
+    "humaneval": {
+      "passed": 80,
+      "total": 164,
+      "pass_at_1": 0.4878048780487805,
+      "result_sha256": "a79b69af308b42048f05c6138efa1ab68d6b4b27491d3c0026e1e4c925da08b2"
+    },
+    "mbpp": {
+      "passed": 241,
+      "total": 378,
+      "pass_at_1": 0.6375661375661376,
+      "result_sha256": "68eddc6cb6d8bf7555d8dc5b2cb4566e421e5a6b67da9be5d5b1c09b9b84eac7"
+    }
+  }
+}

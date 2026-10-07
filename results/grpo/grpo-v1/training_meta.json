@@ -1,0 +1,76 @@
+{
+  "stage": "grpo",
+  "implementation": "manual",
+  "status": "completed",
+  "sft_run": "/root/autodl-tmp/qwen3-code-posttrain/runs/lora_sft/lora-v1",
+  "sft_adapter_sha256": "e5e86fdecec8228a46984536feb9942d70bde5f7925d103e3b58d9f32a900ff1",
+  "sft_adapter_config_sha256": "98762a1aeacf53e90ff11b13f5ce88a6c3a26d3516e13b416532d4f16ee0fe5e",
+  "grpo_lock_sha256": "94a067f820e9c6ad87b5a5ed43b902f27516346ef053e594d995c68301674d99",
+  "sft_tokenizer_sha256": "be75606093db2094d7cd20f3c2f385c212750648bd6ea4fb2bf507a6a4c55506",
+  "train_sha256": "43fa3353ceef3af53d20b4b0680b789d7ad60cdebc85e4e35b2d18fa7af6b91d",
+  "valid_sha256": "107c4f5b97b254cd6d6302e3f499e52055cca52992402857f08215ee4252877f",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "worker_sha256": "b731ddcaa89b0a2d2ba26384c93c5f3c861c39d2b3176b14640dd7613afa1670",
+  "docker_image_id": "sha256:5a256a923100f68fb9ce47f250f1525eba6718804f1bf4bfdd07386db027021f",
+  "device": "cuda",
+  "reward_backend": "ssh_tunnel_mac_docker",
+  "completed_groups": 200,
+  "requested_groups": 200,
+  "optimizer_steps": 192,
+  "zero_variance_groups": 104,
+  "length_limit_candidates": 7,
+  "best_group": 150,
+  "validation": [
+    {
+      "group": 0,
+      "passed": 79,
+      "total": 124,
+      "pass_rate": 0.6370967741935484,
+      "mean_reward": 0.7349368373561921
+    },
+    {
+      "group": 50,
+      "passed": 79,
+      "total": 124,
+      "pass_rate": 0.6370967741935484,
+      "mean_reward": 0.7337638168283328
+    },
+    {
+      "group": 100,
+      "passed": 77,
+      "total": 124,
+      "pass_rate": 0.6209677419354839,
+      "mean_reward": 0.7285585382359575
+    },
+    {
+      "group": 150,
+      "passed": 81,
+      "total": 124,
+      "pass_rate": 0.6532258064516129,
+      "mean_reward": 0.7385292127227611
+    },
+    {
+      "group": 200,
+      "passed": 78,
+      "total": 124,
+      "pass_rate": 0.6290322580645161,
+      "mean_reward": 0.733837130611324
+    }
+  ],
+  "train_runtime_seconds": 10165.230199038982,
+  "max_hours": 4.0,
+  "settings": {
+    "group_size": 4,
+    "max_prompt_tokens": 512,
+    "max_completion_tokens": 512,
+    "clip": 0.2,
+    "updates_per_group": 2,
+    "temperature": 0.8,
+    "top_k": 0,
+    "top_p": 1.0,
+    "learning_rate": 5e-06,
+    "beta": 0.0,
+    "seed": 42,
+    "eval_every": 50
+  }
+}

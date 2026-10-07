@@ -1,59 +1,182 @@
-# Qwen3 Code Post-Training Lab｜代码后训练学习项目
+<a id="top"></a>
+<div align="center">
 
-从 `Qwen/Qwen3-1.7B-Base` 出发，在单张 RTX 4090 上学习和复现 **Python 函数代码生成的后训练**：数据清洗 → Full SFT / LoRA SFT → DPO / 奖励模型 + PPO / GRPO → 同一题集评测。这里的重点是读懂每一步的数据流、训练目标和评测约束；它是学习与实验项目，不是生产级训练框架，也不宣称达到最优代码模型效果。
+<img src="docs/assets/readme-banner.svg" alt="Qwen3 Code Post-Training Lab：单卡训练、手写强化学习、统一代码评测" width="100%">
 
-**English:** A hands-on, reproducible learning project for Qwen3-1.7B code post-training, covering SFT, LoRA, DPO, PPO, GRPO and EvalPlus evaluation.
+# Qwen3 Code Post-Training Lab
 
-建议从[已验证结果](#已完成阶段的代码通过率)了解当前进度，再按[代码架构](#代码架构与设计)和[阅读路线](#建议的代码阅读路线)进入实现。每次训练和评测写入独立目录，便于之后横向比较。
+**从 Base 到 SFT、DPO、PPO、GRPO：一个可读、可追溯的代码后训练学习项目**
 
-## 当前状态
+A hands-on lab for Python code post-training with Qwen3-1.7B.
 
-- 已实现模型版本锁定、SFT/RL 数据准备、Full SFT、LoRA SFT、DPO、奖励模型、PPO、GRPO、统一生成、Docker 隔离判分和最终对比脚本。核心训练和数据处理函数附有中文注释，适合对照代码学习。
-- Base、Full SFT、LoRA SFT 已完成：两次 SFT 均在单张 RTX 4090 上训练，三个模型均在本机对全部 542 题生成代码并用 Docker 判分。逐题生成、判分和独立摘要分别保存在 `results/base/20260922T010155Z/`、`results/full_sft/full-v1/`、`results/lora_sft/lora-v1/`。训练权重放在 Hugging Face，GitHub 只保存代码、数据处理记录与评测证据。
-- 当前结果见下图和[训练与评测记录](docs/sft-comparison.md)。DPO、奖励模型、PPO、GRPO 尚未完成正式训练与评测。
-- 公开评测固定为 HumanEval+ v0.1.10（164 题）和 MBPP+ v0.2.0（378 题）。`eval.jsonl` 与官方测试快照的哈希见 `eval.lock.json`。独立自建复核题尚未加入，先不要把现有结果称为最终实验结论。
-- 标准答案直接判分的自检为 HumanEval+ 163/164、MBPP+ 377/378；HumanEval/32 和 Mbpp/255 连题库自带的答案也未通过当前测试。所有模型仍按完整 164/378 题报告，逐题记录保留。
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](requirements.txt)
+[![PyTorch](https://img.shields.io/badge/PyTorch-Manual_RL-EE4C2C?logo=pytorch&logoColor=white)](scripts/train_grpo.py)
+[![GPU](https://img.shields.io/badge/Training-Single_RTX_4090-76B900)](#quickstart)
+[![Evaluation](https://img.shields.io/badge/EvalPlus-542_tasks-0D9488)](#results)
+[![Models](https://img.shields.io/badge/Models-Hugging_Face-FFD21E?logo=huggingface&logoColor=black)](#models)
 
-## 已完成阶段的代码通过率
+[实验结果](#results) · [快速开始](#quickstart) · [模型权重](#models) · [代码架构](#architecture) · [学习路线](#learning) · [文档导航](#docs)
 
-![Base、Full SFT 和 LoRA SFT 在 HumanEval+ 与 MBPP+ 上的 pass@1 对比](docs/assets/sft-comparison.svg)
+</div>
 
-| 模型 | HumanEval+ | MBPP+ |
+---
+
+基于 **Qwen/Qwen3-1.7B-Base**，在单张 RTX 4090 上完成 Full SFT、LoRA SFT、DPO、Reward Model + PPO 和 GRPO，再用同一套 Python 函数题评测。项目把数据格式、损失函数、采样、奖励和模型选择连成一条可读的实验链路，核心函数配有详细中文注释。
+
+适合已经接触 Python / PyTorch、希望从真实代码理解大模型后训练的学习者。目前六阶段训练与评测已完成，最后核对日期：**2026-10-07**。项目定位是学习与实验；这里报告的通过率对应固定函数题与本次训练设置。
+
+<a id="highlights"></a>
+## ✨ 项目亮点
+
+| | 可以在这里学到什么 |
+| :--- | :--- |
+| 🧠 **读懂训练目标** | 手写 PyTorch DPO / PPO / GRPO 循环与损失，跟踪概率、优势、梯度和参数更新。SFT 与奖励模型使用 TRL。 |
+| 🧪 **让训练信号可检查** | 来源与 SHA-256 锁定；偏好对执行验证；GRPO 复测参考代码、题干示例、空实现和逻辑变异。 |
+| 📊 **保留完整实验记录** | 六阶段分别保存原始代码、逐题判分和摘要；同一题集、同一解码参数，同时展示提升与退步。 |
+| 🛠️ **理解单卡实现取舍** | LoRA、bf16、梯度检查点与梯度累积；GRPO 支持 GPU 服务器生成、Mac Docker 经 SSH 隧道判分。 |
+
+<a id="results"></a>
+## 📊 六阶段实验结果
+
+<img src="docs/assets/posttrain-comparison.svg" alt="六阶段 HumanEval+ 与 MBPP+ 严格 pass@1 对比" width="100%">
+
+**固定口径：** HumanEval+ 164 题 + MBPP+ 378 题 · 原始代码题干 · 每题一次贪心生成 · 最多 512 个新 token · EvalPlus 0.3.1 · 本地 MPS 生成 / Docker 判分。
+
+| 模型 | HumanEval+ pass@1 | MBPP+ pass@1 |
 | --- | ---: | ---: |
-| Base | 31/164（18.9%） | 214/378（56.6%） |
-| Full SFT | 67/164（40.9%） | 229/378（60.6%） |
-| LoRA SFT | 82/164（50.0%） | 237/378（62.7%） |
+| [Base](results/base/20260922T010155Z/summary.json) | 31/164 · 18.9% | 214/378 · 56.6% |
+| [Full SFT](results/full_sft/full-v1/summary.json) | 67/164 · 40.9% | 229/378 · 60.6% |
+| [LoRA SFT](results/lora_sft/lora-v1/summary.json) | 82/164 · 50.0% | 237/378 · 62.7% |
+| [DPO v2](results/dpo/dpo-v2/summary.json) | 96/164 · 58.5% | 228/378 · 60.3% |
+| [PPO](results/ppo/ppo-v2/summary.json) | 72/164 · 43.9% | 231/378 · 61.1% |
+| [GRPO](results/grpo/grpo-v1/summary.json) | 80/164 · 48.8% | 241/378 · 63.8% |
 
-表中使用相同的冻结题集、原始 prompt、贪心解码和严格 EvalPlus+ 测试；每题只生成一次。LoRA SFT 在这两套测试中最高，但这只说明当前训练与评测设置下的表现，不代表其它代码任务也有相同排序。详见[训练配置、逐题结果与局限](docs/sft-comparison.md)。
+**如何解读这些结果：**
 
-## 模型权重（Hugging Face）
+- **SFT 提升最明确。** LoRA SFT 相对 Base，HumanEval+ 从 18.90% 到 50.00%（+31.10 个百分点），MBPP+ 从 56.61% 到 62.70%（+6.08 个百分点）。
+- **DPO v2 对两套题的影响不同。** 相对 LoRA SFT，HumanEval+ 多通过 14 题（+8.54 个百分点），MBPP+ 少通过 9 题（−2.38 个百分点）。
+- **PPO / GRPO 仍有改进空间。** PPO 两套题均低于 LoRA SFT；GRPO 的 HumanEval+ 少通过 2 题（−1.22 个百分点），MBPP+ 多通过 4 题（+1.06 个百分点）。
 
-| 模型 | 下载与模型卡 | 使用时需要什么 |
-| --- | --- | --- |
-| Full SFT `full-v1` | [Qwen3-1.7B-Python-Code-Full-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-Full-SFT) | 完整模型，直接用 Transformers `from_pretrained` 加载。 |
-| LoRA SFT `lora-v1` | [Qwen3-1.7B-Python-Code-LoRA-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-LoRA-SFT) | 仅包含适配器；先加载 `models.lock.json` 锁定的 Base，再用 PEFT 叠加。 |
+这是各路线一次训练的观测，训练数据与预算也不同。小幅变化尚未经过多种子重复实验与显著性检验；结论边界见[实验限制](#limitations)。
 
-复现实验时请固定 Hugging Face 提交号：Full SFT 为 `aed510bf517353217c77e001b8f2940aa140da2d`，LoRA SFT 为 `2f8982c3bebe1479f4834e246c98aa2dfecbc69e`。
+[查看六阶段完整报告](results/comparisons/six-stage-grpo-v1/comparison.md) · [SFT 历史报告](docs/sft-comparison.md) · [DPO 错误分析](docs/dpo-error-analysis.md)
 
-模型卡包含训练设置、评测口径、限制和最小推理示例。二者都是**原始代码续写模型**，输入与评测一致的 Python 函数题干；不要把这里的通过率理解为聊天助手或完整软件工程任务的能力。
+<details>
+<summary><b>展开：原始测试通过率与计分说明</b></summary>
 
-## 数据流
+| 模型 | HumanEval 原始测试 | MBPP 原始测试 |
+| --- | ---: | ---: |
+| Base | 33/164 · 20.1% | 249/378 · 65.9% |
+| Full SFT | 75/164 · 45.7% | 264/378 · 69.8% |
+| LoRA SFT | 90/164 · 54.9% | 272/378 · 72.0% |
+| DPO v2 | 100/164 · 61.0% | 265/378 · 70.1% |
+| PPO | 78/164 · 47.6% | 268/378 · 70.9% |
+| GRPO | 88/164 · 53.7% | 273/378 · 72.2% |
 
-```text
-锁定 Base 权重 ──┬── Base 评测
-               ├── Full SFT ────────────────────────── 评测
-               ├── LoRA SFT ─┬─────────────────────── 评测
-               │             ├── DPO ──────────────── 评测
-               │             ├── PPO ──────────────── 评测
-               │             └── GRPO ─────────────── 评测
-               └── 偏好数据训练奖励模型 ── 给 PPO 打分
+原始测试按逐题结果的 `base_status` 计数；带 `+` 的指标要求原始和增强测试同时通过，与 `summary.json` 一致。本文“百分点”表示通过率之差；相对增长率需另行计算。
+
+GRPO 与 LoRA SFT 逐题配对：HumanEval+ 有 6 题从失败变通过、8 题从通过变失败；MBPP+ 分别为 6 题和 2 题。
+
+</details>
+
+<details>
+<summary><b>展开：GRPO 训练预算、开发集轨迹与最佳模型</b></summary>
+
+- `grpo-v1` 从原 LoRA SFT `lora-v1` 出发；冻结数据包含 2,005 道训练题、124 道开发题。本轮完成 200 组、每组 4 候选；96 组有奖励差异，104 组同分而跳过，累计 192 次参数更新。
+- 4090 生成及更新，Mac Docker 经 SSH 隧道执行训练测试。采用学习率 `5e-6`、两遍组内更新、`beta=0`；没有额外 reference KL。训练记录总耗时 **10,165.23 秒（约 2 小时 49 分 25 秒）**，包括开发集评估、远程判分及保存，不等于纯 GPU 计算时间。
+- 开发集全测试通过题数按第 0/50/100/150/200 组依次为 **79/79/77/81/78，分母均为 124**。`final_model` 取第 150 组（81/124），`last_model` 是第 200 组（78/124）；本次公开评测只使用预先由开发集选出的 `final_model`，没有按公开测试成绩挑权重。
+- 最佳模型权重 SHA-256：`cc69fa849d7ac6f0ef8b7d3801fb6210c52bf16231b9b548097de7b62b0d32f7`。已核对它与 `checkpoints/best`、`checkpoints/group-150` 一致。训练记录保存在 `runs/grpo/grpo-v1/training_meta.json`，评测记录见[GRPO 摘要](results/grpo/grpo-v1/summary.json)。开发集曾用于 SFT 验证，开发集涨分不代表公开评测必然涨分。
+
+</details>
+
+<a id="quickstart"></a>
+## 🚀 快速开始
+
+**先选择入口：** 看结果无需 GPU；读代码从[学习路线](#learning)开始；复现训练需要一张支持 bf16 的 CUDA 卡；执行代码评测需要可用的 Docker。
+
+**1. 获取项目与环境（CUDA 训练服务器）**
+
+```bash
+git clone https://github.com/lbw-work/qwen3-code-posttraining-lab.git
+cd qwen3-code-posttraining-lab
+
+conda create -n qwen-code python=3.11 -y
+conda activate qwen-code
+
+# 已验证的 CUDA 12.8 环境；其他驱动按实际兼容情况安装 PyTorch。
+python -m pip install torch==2.8.0 --index-url https://download.pytorch.org/whl/cu128
+python -m pip install -r requirements.txt
+python -m pip install --no-deps -e .
+export OMP_NUM_THREADS=4
+
+python -m unittest discover -s tests -v
+python scripts/check_project.py
 ```
 
-DPO、PPO、GRPO 的**策略模型**均从同一个 LoRA SFT 适配器出发；PPO 使用的奖励模型则单独从 Base 和偏好数据训练。DPO 与奖励模型共用 `data/preference/`；PPO 和 GRPO 共用 `data/rl/` 的题干。GRPO 奖励来自训练数据自带的测试，绝不读取 EvalPlus 的隐藏测试。
+`requirements.txt` 固定其余依赖版本，editable 安装启用 `src/qwen_posttrain` 公共包。当前冻结训练数据随仓库提供；Base 与后训练权重需单独准备；每个阶段的前置条件见[复现指南](docs/reproduction.md)。Mac 本地评测使用已有 MPS 环境，以上 CUDA 安装命令用于服务器。
 
-## 代码架构与设计
+**2. 下载锁定模型 / 准备训练输入**
 
-### 1. 数据层：先锁版本，再训练
+```bash
+# 按 models.lock.json 下载 Base 和官方参考模型。
+python scripts/download_models.py
+
+# 仓库已有 SFT / RL 数据时，不必重复构建。
+# 首次复现 SFT 可选 full 或 lora，训练记录写入独立目录。
+python scripts/train_sft.py --mode lora --run-id lora-reproduction-v1
+```
+
+也可从[模型权重](#models)下载已发布的 SFT 模型。DPO / PPO / GRPO 从同一 LoRA SFT 分叉；PPO 先训练奖励模型。冻结数据准备、各阶段命令和已有成果保护规则见[详细指南](docs/reproduction.md)。
+
+**3. 完整评测：生成 → Docker 判分 → 汇总**
+
+在支持 Docker 的机器上准备镜像；AutoDL GPU 服务器的 GRPO 奖励可用[Mac Docker 隧道方案](docs/grpo-mac-reward.md)。
+
+```bash
+docker build -f Dockerfile.eval -t qwen-code-eval:0.3.1 .
+
+# 以下示例要求 models/base 已下载。
+python scripts/generate_eval.py --stage base --model models/base --run-id base-reproduction-v1
+python scripts/score_eval.py results/base/base-reproduction-v1
+python scripts/summarize_eval.py results/base/base-reproduction-v1
+```
+
+每次实验使用新 `run-id`，脚本拒绝覆盖旧结果。`--limit` 仅用于生成冒烟检查；正式通过率必须完成全部 542 题。
+
+<a id="models"></a>
+## 🤗 模型权重
+
+| 模型 | 模型卡与下载 | 加载方式 |
+| --- | --- | --- |
+| Full SFT `full-v1` | [Eternity5551/Qwen3-1.7B-Python-Code-Full-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-Full-SFT) | 完整模型，Transformers 直接加载。 |
+| LoRA SFT `lora-v1` | [Eternity5551/Qwen3-1.7B-Python-Code-LoRA-SFT](https://huggingface.co/Eternity5551/Qwen3-1.7B-Python-Code-LoRA-SFT) | 加载锁定 Base，再用 PEFT 叠加适配器。 |
+| DPO v2 / PPO / GRPO | 本地已训练并评测，权重尚未发布 | 分别保留独立适配器与训练记录。 |
+
+这些权重用于**原始 Python 代码续写**：输入与评测一致的函数题干。训练成绩不直接代表聊天、多轮交互或软件工程能力。
+
+<details>
+<summary><b>展开：已发布权重的固定 revision</b></summary>
+
+- Full SFT：`aed510bf517353217c77e001b8f2940aa140da2d`
+- LoRA SFT：`2f8982c3bebe1479f4834e246c98aa2dfecbc69e`
+
+Base 的模型仓库、固定提交号和本地目录见 [`models.lock.json`](models.lock.json)。模型卡包含训练设置、评测口径、限制及最小推理示例。
+
+</details>
+
+<a id="architecture"></a>
+## 🧩 架构与设计
+
+源码按 **公共包 → 命令入口 → 冻结输入 → 独立结果 → 自动检查** 分层；完整目录职责和依赖方向见[架构与开发约定](docs/architecture.md)。现有 `python scripts/…` 命令保留，首次运行先执行 `python -m pip install --no-deps -e .`。
+
+<img src="docs/assets/training-flow.svg" alt="同一 Base 的 Full SFT、LoRA SFT 与三条后训练分支，使用统一 EvalPlus 评测；奖励模型从 Base 独立训练后为 PPO 打分" width="100%">
+
+DPO、PPO、GRPO 的策略模型均从 **LoRA SFT `lora-v1`** 分叉。奖励模型独立从 Base 与偏好对训练，再为 PPO 打分。GRPO 从训练来源测试中获取执行奖励，公开评测隐藏测试不参与训练和检查点选择。
+
+<details>
+<summary><b>展开：数据、训练与评测的核心实现设计</b></summary>
+
+### 数据：版本锁定与执行审核
 
 | 代码入口 | 输入 → 输出 | 为什么这样设计 |
 | --- | --- | --- |
@@ -61,22 +184,24 @@ DPO、PPO、GRPO 的**策略模型**均从同一个 LoRA SFT 适配器出发；P
 | [`freeze_eval.py`](scripts/freeze_eval.py)、[`eval.lock.json`](eval.lock.json) | EvalPlus 官方题库 → `eval.jsonl` 与测试快照 | 训练前固定题目、版本和 SHA-256；训练处理只读取题干，不读取隐藏测试。 |
 | [`prepare_sft.py`](scripts/prepare_sft.py) | OpenCodeInstruct → `data/sft/{train,valid}.jsonl` | 只保留测试全过、可解析且含函数的 Python 代码；按题干去重，排除与评测题干明显重合的样本。输出 `prompt` / `completion` 两列。 |
 | [`prepare_rl.py`](scripts/prepare_rl.py) | SFT 来源记录 → `data/rl/{train,valid}.jsonl` | 保留训练题自带的 `tests`，供 GRPO 算执行奖励；不使用公开评测的隐藏测试。 |
-| [`export_themis.py`](scripts/export_themis.py) → [`prepare_preference.py`](scripts/prepare_preference.py) | Themis Python 功能正确性偏好 → `prompt` / `chosen` / `rejected` | DPO 与奖励模型共用同一批偏好对；过滤语法错误、重复和评测重合。此数据阶段尚未正式完成。 |
+| [`prepare_grpo.py`](scripts/prepare_grpo.py) → [`audit_grpo_data.py`](scripts/audit_grpo_data.py) | SFT/RL 原划分 → `data/grpo/{train,valid}.jsonl` | 排除超长和不完整函数题，Docker 复测参考答案、空实现、恒零探针、题干示例及逻辑变异；保留溯源与质量报告。 |
+| [`export_verified_preference.py`](scripts/export_verified_preference.py) → [`audit_preference_examples.py`](scripts/audit_preference_examples.py) → [`prepare_preference.py`](scripts/prepare_preference.py) | OpenCodeInstruct 函数答案与训练测试 → 执行验证的 `prompt` / `chosen` / `rejected` | v2 本地冻结训练 3,212 对、验证 153 对；DPO 与奖励模型共用。正例全过，负例通过至少一半但未全过原测试；可解析题干示例不一致者被排除。 |
+| [`prepare_ppo.py`](scripts/prepare_ppo.py) | 冻结偏好题干 + 原 RL 来源 → `data/ppo/{train,valid}.jsonl` | 与 DPO/RM 使用同源函数题；排除会被 PPO 512 token 上限截断的 11 道题。训练 3,201 道、验证 153 道。 |
 
 所有处理后的数据都有对应 `*.lock.json`，记录源版本、输出哈希与评测版本。脚本发现已存在的冻结输出时会停止，防止重跑悄悄覆盖实验输入。
 
-### 2. 训练层：同一底座，逐阶段增加目标
+### 训练：不同目标，共同起点
 
 | 阶段与入口 | 读入什么 | 训练目标与产物 | 当前状态 |
 | --- | --- | --- | --- |
 | [`train_sft.py`](scripts/train_sft.py) `--mode full/lora` | 同一份 SFT `prompt` / `completion`、锁定 Base | 只对代码答案计算交叉熵：题干 token 的标签为 `-100`。Full 更新全部参数；LoRA 只更新低秩矩阵。各自保存 `final_model/` 和 `training_meta.json`。 | 已在 4090 训练并完整评测 |
-| [`train_dpo.py`](scripts/train_dpo.py) | LoRA SFT、`chosen` / `rejected` | 比较同一题两份答案在可训练策略和冻结参考策略下的对数概率，直接优化偏好差；手写 PyTorch 损失。 | 代码已实现，尚未正式训练 |
-| [`train_reward.py`](scripts/train_reward.py) → [`train_ppo.py`](scripts/train_ppo.py) | 偏好对训练的奖励模型、LoRA SFT、RL 题干 | 奖励模型先学习给答案打分；PPO 再采样回答，用奖励、KL、GAE、裁剪损失更新 LoRA 与价值头。PPO 循环自行实现。 | 代码已实现，尚未正式训练 |
-| [`train_grpo.py`](scripts/train_grpo.py) + [`code_reward.py`](scripts/code_reward.py) | LoRA SFT、RL 题干及训练测试 | 每题采样 4 份代码，在隔离容器里执行训练测试，以组内相对得分更新策略；手写 PyTorch 损失。 | 代码已实现，尚未正式训练 |
+| [`train_dpo.py`](scripts/train_dpo.py) | LoRA SFT、`chosen` / `rejected` | 比较同一题两份答案在可训练策略和冻结参考策略下的对数概率，直接优化偏好差；手写 PyTorch 损失。 | `dpo-v2` 已训练并完整评测 |
+| [`train_reward.py`](scripts/train_reward.py) → [`train_ppo.py`](scripts/train_ppo.py) | 偏好对训练的奖励模型、LoRA SFT、PPO 函数题干 | 奖励模型先学习给答案打分；PPO 再采样回答，用缩放后的奖励、KL、GAE、裁剪损失更新 LoRA 与价值头。PPO 循环自行实现。 | 奖励模型 `reward-v2`、PPO `ppo-v2` 已训练；PPO 已完整评测 |
+| [`train_grpo.py`](scripts/train_grpo.py) + [`code_reward.py`](scripts/code_reward.py) | LoRA SFT、冻结 GRPO 题干及训练测试 | 每题采样 4 份代码，以 Docker 测试比例算组内优势；同分组跳过；开发集选择 best，同时保留 last 和逐题候选。 | `grpo-v1` 已在 4090 训练并完整评测 |
 
-[`train_common.py`](scripts/train_common.py) 负责后续阶段共用的运行目录、锁文件校验与适配器路径检查。DPO、PPO、GRPO 都从**同一份 LoRA SFT** 分叉，便于比较三种偏好优化路线；这不意味着它们已取得正式效果。
+[`train_common.py`](scripts/train_common.py) 负责后续阶段共用的运行目录、锁文件校验与适配器路径检查。DPO、PPO、GRPO 都从**同一份 LoRA SFT** 分叉，便于比较三种偏好优化路线；六阶段结果均已完成并保留独立记录。
 
-### 3. 评测层：生成与执行隔离
+### 评测：生成与执行隔离
 
 ```text
 eval.jsonl + 模型
@@ -88,90 +213,69 @@ eval.jsonl + 模型
 
 [`generate_eval.py`](scripts/generate_eval.py) 对完整模型直接加载权重，对 LoRA 自动加载锁定 Base 再叠加适配器。它不执行生成代码；[`score_eval.py`](scripts/score_eval.py) 才把代码交给 Docker。两套公开题始终使用同一原始 prompt、贪心解码、每题一次生成和最多 512 个新 token。按阶段保存原始输出、逐题判分、配置与摘要，避免只留下一个无法追溯的总分。
 
-### 建议的代码阅读路线
 
-1. 看 [`eval.jsonl`](eval.jsonl)、[`freeze_eval.py`](scripts/freeze_eval.py)：先理解“同一套题”怎样固定下来。
-2. 看 [`prepare_sft.py`](scripts/prepare_sft.py) 和 [`data/examples/`](data/examples/)：跟踪一条原始记录如何变为 `prompt` / `completion`。
-3. 看 [`train_sft.py`](scripts/train_sft.py)：重点找标签掩码、Full 与 LoRA 的参数更新范围、最佳 checkpoint 的选择。
-4. 看 [`generate_eval.py`](scripts/generate_eval.py) → [`score_eval.py`](scripts/score_eval.py) → [`summarize_eval.py`](scripts/summarize_eval.py)：用一条题目追踪从生成代码到 pass@1 的全过程。
-5. 再看 [`prepare_preference.py`](scripts/prepare_preference.py) → [`train_dpo.py`](scripts/train_dpo.py) → [`train_reward.py`](scripts/train_reward.py) / [`train_ppo.py`](scripts/train_ppo.py) → [`train_grpo.py`](scripts/train_grpo.py)：比较各方法的训练信号从哪里来、哪些模型被冻结。
+</details>
 
-## 环境与数据准备
+<a id="data"></a>
+## 🗂️ 数据与可复现记录
 
-服务器建议 Python 3.11，先按 CUDA 驱动安装匹配的 PyTorch，再安装：
+数据来源为固定版本的 [NVIDIA OpenCodeInstruct](https://huggingface.co/datasets/nvidia/OpenCodeInstruct)，许可证为 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。SFT 使用原始第一份 100,000 行分片筛选，来源提交、分片与输出哈希由锁文件追溯。
 
-公开仓库随附已处理的 `data/sft/`、`data/rl/`、对应锁文件及 Base 判分结果。
-服务器克隆后无需重新运行 `prepare_sft.py` 或 `prepare_rl.py`；这两个脚本用于从原始数据重新构建，遇到已有数据会停止，以免覆盖冻结版本。
-Base 和官方参考模型的权重没有随 GitHub 仓库上传；服务器运行 `download_models.py`，按 `models.lock.json` 的提交号下载。已训练的 Full SFT / LoRA SFT 权重从上面的 Hugging Face 模型仓库获取。
+| 用途 | 训练 / 验证或开发 | 训练信号 | 查看格式与审核 |
+| --- | ---: | --- | --- |
+| Full / LoRA SFT | 26,805 / 1,386 | `prompt` + 正确代码 `completion` | [数据样例](data/examples/README.md) |
+| DPO v2 / Reward Model | 3,212 / 153 对 | 全过正例与部分通过负例；负例来自逻辑变异 | [执行验证说明](docs/verified-preference-data.md) · [10 对样例](docs/preference-examples.md) |
+| PPO | 3,201 / 153 题 | 题干采样 + 学习得到的奖励模型分数 | [PPO 数据说明](docs/ppo-data.md) |
+| GRPO | 2,005 / 124 题 | 每题 4 份真实代码的训练测试通过比例 | [GRPO 数据审核](docs/grpo-training.md) · [10 道样例](docs/grpo-data-examples.md) |
+| 公开评测 | HumanEval 164 + MBPP 378 | 原始测试与增强测试的 pass@1 | [`eval.lock.json`](eval.lock.json) |
 
-```bash
-python -m pip install -r requirements.txt
-docker build -f Dockerfile.eval -t qwen-code-eval:0.3.1 .
-python scripts/download_models.py
-```
+`*.lock.json` 固定输入版本；`training_meta.json` 记录实际训练；`config.json`、原始生成代码、逐题判分与 `summary.json` 留在各自运行目录。公开仓库不包含 Base 权重、原始 Parquet 或全部本地训练产物；当前偏好 v2、PPO、GRPO 数据及对应锁文件均随仓库提供。各训练阶段的原始元数据副本见 `results/<stage>/<run-id>/training_meta.json`。
 
-SFT 数据源是固定版本的 [NVIDIA OpenCodeInstruct](https://huggingface.co/datasets/nvidia/OpenCodeInstruct) 的第一份 100,000 行分片。脚本只保留原数据记录的测试全过、单个 Python 代码块、可解析且含顶层函数的样本，并按题干去重、与公开评测题干做连续词重合检查。当前得到训练 26,805 条、验证 1,386 条；`data/sft.lock.json`、`data/rl.lock.json` 保存源文件与输出哈希。连续词检查不能保证发现所有语义近似题，正式报告应如实注明。
+<a id="learning"></a>
+## 📚 建议学习路线
 
-随仓库发布的 SFT 和 RL 数据是从 NVIDIA OpenCodeInstruct（[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)）筛选并转换得到的版本；原始仓库、固定提交号、原始分片哈希及转换后的哈希见 `data/sft.lock.json` 和 `data/rl.lock.json`。仓库未包含原始 Parquet 分片。
+| 顺序 | 从哪里读 | 读完应能解释 |
+| --- | --- | --- |
+| ① 固定评测 | [`freeze_eval.py`](scripts/freeze_eval.py) → [`eval.jsonl`](eval.jsonl) | 如何保证不同模型回答同一套题。 |
+| ② 数据到 token | [`prepare_sft.py`](scripts/prepare_sft.py) → [处理后样例](data/examples/) | 一条记录如何变成题干与代码答案。 |
+| ③ 公共实现与 SFT | [`artifacts.py`](src/qwen_posttrain/artifacts.py) → [`train_sft.py`](scripts/train_sft.py) | 标签 `-100`、答案 loss、参数更新范围、最佳模型选择。 |
+| ④ 生成与判分 | [`generate_eval.py`](scripts/generate_eval.py) → [`score_eval.py`](scripts/score_eval.py) → [`summarize_eval.py`](scripts/summarize_eval.py) | 原始 completion 怎样变成逐题结果和 pass@1。 |
+| ⑤ DPO | [`prepare_preference.py`](scripts/prepare_preference.py) → [`train_dpo.py`](scripts/train_dpo.py) | chosen/rejected、冻结 reference 与概率差。 |
+| ⑥ Reward + PPO | [`policy.py`](src/qwen_posttrain/policy.py) → [`train_reward.py`](scripts/train_reward.py) → [`train_ppo.py`](scripts/train_ppo.py) | reward、KL、GAE、value loss 与策略裁剪。 |
+| ⑦ GRPO | [`train_grpo.py`](scripts/train_grpo.py) → [`code_reward.py`](scripts/code_reward.py) | 组内标准化、同分零更新、固定旧概率与执行奖励。 |
 
-偏好数据尚未下载。`scripts/export_themis.py` 可从固定提交号的 [Themis-CodePreference](https://huggingface.co/datasets/project-themis/Themis-CodePreference) 导出 Python 功能正确性子集，并把原始类别整数转成可读名称。然后运行：
+<a id="docs"></a>
+## 🧭 文档导航
 
-```bash
-python scripts/export_themis.py
-python scripts/prepare_preference.py --source data/raw/themis-python-fc.jsonl --source-name project-themis/Themis-CodePreference@7c366b23590cc9ff8d372bb47280fcd474536344
-```
+| 想做什么 | 文档 |
+| --- | --- |
+| 理解目录、依赖与发布规则 | [架构与开发约定](docs/architecture.md) · [本次清理清单](docs/repository-cleanup.md) |
+| 安装环境、准备数据、复现各阶段 | [实验复现与阶段命令](docs/reproduction.md) |
+| 查看原 SFT 训练和评测细节 | [SFT 历史报告](docs/sft-comparison.md) |
+| 检查偏好数据和 DPO 的退步原因 | [偏好数据审核](docs/dpo-data-audit.md) · [DPO 错误分析](docs/dpo-error-analysis.md) |
+| 准备 PPO 数据 | [PPO 数据说明](docs/ppo-data.md) |
+| 准备 GRPO、看本地验收证据 | [GRPO 指南](docs/grpo-training.md) · [本地验收记录](docs/grpo-local-validation.json) |
+| AutoDL GPU + Mac Docker 远程奖励 | [跨机判分与 tmux 指令](docs/grpo-mac-reward.md) |
+| 查看六阶段最终通过率 | [六阶段对比报告](results/comparisons/six-stage-grpo-v1/comparison.md) |
 
-第二步会统一成代码题干与代码答案，检查长度、语法、去重和评测重合，再生成 DPO/奖励模型共同使用的训练/验证集与锁文件。导出整套原始数据较大，因此本机尚未运行这两步。
+<a id="limitations"></a>
+## 🔎 实验限制与下一步
 
-## 各阶段命令
+- **泛化与数据重合。** 连续词、函数名与实现去重只能降低明显重合，无法排除所有语义近似题。独立自建复核题尚未加入。
+- **开发集来源。** GRPO 开发题曾用于 SFT 验证；偏好 valid 的题曾用于 SFT train。开发集和验证 loss 不等同于新题泛化成绩。
+- **评测环境。** 当前标准答案自检为 HumanEval+ 163/164、MBPP+ 377/378；HumanEval/32、Mbpp/255 的题库标准答案也未通过当前测试。各模型仍按完整分母报告。
+- **算法与预算。** DPO / PPO / GRPO 数据和训练预算不同；简化 GRPO 的 `beta=0`，裁剪不保证真实 KL 有界。小幅成绩变化需多种子重复验证。
+- **运行恢复。** 当前 GRPO 未保存完整优化器和随机状态，不支持严格断点续训。远程奖励服务或隧道故障会报错停止，不能被记成零奖励。
 
-SFT 已在服务器完成；以下命令用于复现训练，`<编号>` 是脚本输出目录中的运行编号：
+后续优先补充独立开发题与重复实验，再排查奖励噪声、有效组比例和模型退步题型；扩大训练预算前先完善断点恢复。
 
-```bash
-python scripts/train_sft.py --mode full
-python scripts/train_sft.py --mode lora
-```
+<a id="references"></a>
+## 🤝 参考与致谢
 
-有 `data/preference/` 后可以跑 DPO 与奖励模型，再跑 PPO；GRPO 只需要前面的 `data/rl/`：
+底座来自 [Qwen3](https://github.com/QwenLM/Qwen3)，训练数据来自 [OpenCodeInstruct](https://huggingface.co/datasets/nvidia/OpenCodeInstruct)，评测使用 [EvalPlus](https://github.com/evalplus/evalplus)，SFT / 奖励模型依赖 [TRL](https://github.com/huggingface/trl)。
 
-```bash
-python scripts/train_dpo.py --sft-run runs/lora_sft/<编号>
-python scripts/train_reward.py
-python scripts/train_ppo.py --sft-run runs/lora_sft/<编号> --reward-run runs/reward/<编号>
-python scripts/train_grpo.py --sft-run runs/lora_sft/<编号>
-```
+学习更多训练实现可参考 [LlamaFactory](https://github.com/hiyouga/LlamaFactory)、[OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) 与 [TRL](https://github.com/huggingface/trl)。本项目首页采用清晰导航、快速开始和分层文档的组织方式，便于从结果进入代码。
 
-DPO、PPO、GRPO 的训练循环和损失都由本项目的 PyTorch 代码实现，不调用 TRL 训练器：DPO 对同一题的 chosen/rejected 计算 policy 与冻结 reference 的答案概率差；PPO 用奖励模型分数、KL、GAE 和裁剪损失更新 LoRA 与价值头；GRPO 每题采样 4 份代码，用训练题自带测试的通过比例计算组内优势，再做两遍裁剪更新。GRPO 的 `beta=0` 不额外驻留 reference；相同得分的组不更新。SFT 与奖励模型仍使用 TRL。
+如果发现样例错配、评测异常或复现问题，欢迎通过 [Issues](https://github.com/lbw-work/qwen3-code-posttraining-lab/issues) 提供运行编号、环境和最小复现。反馈时请隐藏密码与访问令牌。
 
-每次训练独立保存 `final_model/`、`training_meta.json` 和日志；DPO、GRPO 保存中间适配器检查点，PPO 另存价值头。SFT、DPO、奖励模型用各自的验证 loss 选择模型，评测集不参与选择。GRPO 的 `--max-steps` 表示最多采样多少组题目；PPO 的 `--max-steps` 表示最多执行多少条 rollout。训练脚本要求恰好一张 CUDA 卡，数据和显卡检查在创建运行目录前完成。DPO、奖励模型、PPO、GRPO 的正式单卡训练仍需服务器验证。
-
-## 所有模型用同一口径评测
-
-```bash
-python scripts/generate_eval.py --stage base --model models/base
-python scripts/score_eval.py results/base/<编号>
-python scripts/summarize_eval.py results/base/<编号>
-```
-
-Full SFT 用 `--stage full_sft --model runs/full_sft/<编号>/final_model`；LoRA SFT、DPO、PPO、GRPO 分别指向自己的 `final_model/`。LoRA 评测会自动加载本项目锁定的 Base 底座再叠加适配器。参考模型可用 `--stage reference --model models/reference` 单独测，不进入必需的六阶段集合。
-
-固定生成口径：EvalPlus 原始 prompt；贪心解码；每题只生成一次；最多 512 个新 token；直接判模型原始代码，不做会误删辅助函数的自动清洗。只允许完整 164+378 题进入正式汇总。模型生成代码只在禁网、只读根文件系统和资源受限的 Docker 内执行。
-
-最后显式传入六个阶段的结果目录，避免脚本误选“最新一次”：
-
-```bash
-python scripts/compare_eval.py \
-  results/base/<编号> results/full_sft/<编号> results/lora_sft/<编号> \
-  results/dpo/<编号> results/ppo/<编号> results/grpo/<编号>
-```
-
-它在 `results/comparisons/<编号>/` 保存表格和完整元数据。每个阶段自己的逐题输出、逐题判分、配置、pass@1、生成耗时与训练日志仍在原目录。DPO、GRPO 默认各有 4 小时墙钟上限；奖励模型和 PPO 各有 2 小时上限。墙钟不是精确 GPU 使用时长，正式比较还要结合显卡监控和训练日志记录实际计算量。
-
-## 本机检查
-
-```bash
-python -m unittest discover -s tests -v
-python -m compileall -q scripts tests
-```
-
-这些检查覆盖训练题干去重、PPO token 对齐和优势计算；小模型初始化另验证了 SFT 标签掩码、DPO/奖励模型/GRPO 的训练器输入。它们不能替代尚未完成的 DPO、奖励模型、PPO、GRPO 正式训练。
+<p align="center"><a href="#top">↑ 返回顶部</a></p>

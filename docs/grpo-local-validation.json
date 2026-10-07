@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-06",
+  "scope": "local pretraining preparation; no formal GRPO training",
+  "counts": {
+    "train": 2005,
+    "valid": 124
+  },
+  "quality": {
+    "execution_audit_counts": {
+      "train_checked": 2048,
+      "train_accepted": 2018,
+      "matched_examples": 2318,
+      "parsed_examples": 1662,
+      "mutants_executed": 4137,
+      "mutants_failed_tests": 3664,
+      "questions_with_no_mutation": 510,
+      "reference_or_example_failed": 5,
+      "all_checked_mutants_survive": 27,
+      "constant_output_passes_all": 1,
+      "valid_checked": 128,
+      "valid_accepted": 125
+    },
+    "final_entry_checks": {
+      "corrected_helper_entry": 26,
+      "train_multiple_public_entries": 5,
+      "valid_multiple_public_entries": 1,
+      "train_actual_entry_in_valid": 6,
+      "train_actual_entry_cap": 1
+    }
+  },
+  "grpo_lock_sha256": "94a067f820e9c6ad87b5a5ed43b902f27516346ef053e594d995c68301674d99",
+  "preflight": {
+    "run": "runs/grpo_preflight/local-grpo-preflight-v2",
+    "groups": 8,
+    "candidates": 32,
+    "effective_groups": 6,
+    "zero_variance_groups": 2,
+    "full_test_pass_candidates": 22,
+    "partial_test_pass_candidates": 9,
+    "zero_score_candidates": 1,
+    "syntax_error_candidates": 0,
+    "length_limit_candidates": 0,
+    "optimizer_steps": 0,
+    "seconds": 339.29444504203275,
+    "metadata_sha256": "28510351fa2a0ee4c38127e246278d75b4ca2f7e9de0814a70a3645e59639c9d",
+    "rollouts_sha256": "2b62e3968ee610eb8455f7409a4def84695b179293dfe68e066e1b5765509587",
+    "final_rescore": "runs/grpo_preflight/local-grpo-final-rescore-v1/scores.json",
+    "source_grpo_lock_sha256": "64c05a8c9f871547344d993555ca6328761e81183ee2fee86496b0c7e746b76f",
+    "final_inputs_verified": true
+  },
+  "checks": {
+    "unittest_passed": 18,
+    "compileall": "passed",
+    "reward_correct_wrong_syntax_timeout": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "original_sft_rl_preference_ppo_locks": "verified",
+    "eval_task_count": 542,
+    "tiny_qwen3_lora_update_and_zero_skip": "passed",
+    "final_actual_entry_names_disjoint": true,
+    "final_public_entry_unique": true,
+    "final_max_function_name_count": 5,
+    "final_supporting_hashes": "verified"
+  },
+  "versions": {
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "peft": "0.21.0",
+    "datasets": "5.0.1",
+    "tokenizers": "0.23.2"
+  },
+  "remaining": [
+    "single GPU bf16 backward and peak memory",
+    "cross-machine reverse SSH forwarding and reward probe",
+    "formal training",
+    "fixed EvalPlus evaluation"
+  ],
+  "interpretation": "预检是固定随机种子的八题抽样，训练来源测试得分；不是 EvalPlus、不是整个数据集通过率、不是训练提升。",
+  "semantic_review": {
+    "date": "2026-10-07",
+    "file": "data/grpo-semantic-review.json",
+    "known_mismatch_excluded": true,
+    "scope": "targeted code-classification mismatch scan, not full expert semantic certification"
+  },
+  "remote_reward_validation": {
+    "date": "2026-10-07",
+    "local_http_to_real_docker_scores": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "wrong_token_http_status": 401,
+    "malformed_request_http_status": 400,
+    "docker_failure_http_status": 503,
+    "training_reward_environment_probe": "passed",
+    "actual_cross_machine_tunnel": "not verified; noninteractive SSH authentication unavailable",
+    "worker_unchanged": true,
+    "formal_training_started": false
+  }
+}

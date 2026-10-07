@@ -1,0 +1,479 @@
+{
+  "confirmed_examples": [
+    {
+      "row_number": 1724,
+      "kind": "chosen_missing_explicit_type_validation",
+      "test": "try:\n    generate_robot_property('arm_length', 5.5)\nexcept ValueError:\n    pass\nelse:\n    raise AssertionError('non-integer value must raise ValueError')",
+      "reason": "题干明确要求非整数 property_value 抛出 ValueError；chosen 未检查整数类型。",
+      "chosen": "def generate_robot_property(property_name, property_value):\n    \"\"\"\n    Generates a property assignment statement for a robot's configuration.\n\n    Parameters:\n    property_name (str): The name of the property, consisting of lowercase letters and underscores.\n    property_value (int): The value of the property, an integer between 0 and 100 inclusive.\n\n    Returns:\n    str: A string formatted as \"robot.<property_name> = <property_value>;\"\n\n    Raises:\n    ValueError: If property_name contains invalid characters or property_value is out of range.\n    \"\"\"\n    if not all(c.islower() or c == '_' for c in property_name):\n        raise ValueError(\"property_name must only include lowercase alphabetic characters and underscores.\")\n    if not (0 <= property_value <= 100):\n        raise ValueError(\"property_value must be within the range of 0 to 100, inclusive.\")\n    \n    return f\"robot.{property_name} = {property_value};\"\n",
+      "prompt": "\"\"\"\nYou are given the task to implement a function `generate_robot_property` that constructs a property assignment statement for a robot's configuration. The function accepts two parameters: `property_name` (a string) and `property_value` (an integer). The `property_name` must consist solely of lowercase alphabetic characters and underscores. The `property_value` must be an integer within the range of 0 to 100, inclusive. If these conditions are not satisfied, the function should raise a `ValueError`.\n\nYour function should return a string formatted as `\"robot.<property_name> = <property_value>;\"`.\n\n**Sample Input:**\n- `property_name = \"arm_length\"`\n- `property_value = 5`\n\n**Sample Output:**\n- `\"robot.arm_length = 5;\"`\n\n**Constraints:**\n- `property_name` contains only lowercase letters and underscores.\n- `0 <= property_value <= 100`\n\"\"\"\n\n",
+      "new_test_score": 0.0
+    },
+    {
+      "row_number": 1610,
+      "kind": "incorrect_prompt_example",
+      "test": "assert find_smallest_difference_pair([4,9,1,32,13,5]) == (4,5)",
+      "reason": "题干把 (9,13) 列为合法最小差答案，但其差为 4，(4,5) 的差为 1。chosen 在该例正确，题干示例错误。",
+      "chosen": "def find_smallest_difference_pair(nums):\n    \"\"\"\n    Finds and returns a pair of numbers from the list that have the smallest difference.\n    \n    :param nums: List of integers\n    :return: Tuple of two integers with the smallest difference\n    \"\"\"\n    nums.sort()\n    smallest_diff = float('inf')\n    smallest_pair = (None, None)\n    \n    for i in range(len(nums) - 1):\n        diff = nums[i+1] - nums[i]\n        if diff < smallest_diff:\n            smallest_diff = diff\n            smallest_pair = (nums[i], nums[i+1])\n    \n    return smallest_pair\n",
+      "prompt": "\"\"\"\nYou are given a list of integers. Your task is to write a Python function that identifies and returns a pair of numbers from the list that have the smallest difference between them. If there are multiple pairs with the same smallest difference, you may return any one of them.\n\n**Input:**\n- A list of integers `nums` (2 ≤ len(nums) ≤ 10^5), where each integer is in the range [-10^9, 10^9].\n\n**Output:**\n- A tuple containing two integers from the list that have the smallest difference.\n\n**Sample Input:**\n```\n[4, 9, 1, 32, 13, 5]\n```\n\n**Sample Output:**\n```\n(4, 5)  # or (9, 13)\n```\n\"\"\"\n\n",
+      "new_test_score": 1.0
+    },
+    {
+      "row_number": 1095,
+      "kind": "stdin_function_protocol_mismatch",
+      "test": "assert length_of_lis([10,9,2,5,3,7,101,18]) == 4",
+      "reason": "题干要求读两行输入并打印；chosen 只有接收列表、返回数字的函数，无输入输出入口。",
+      "chosen": "def length_of_lis(nums):\n    \"\"\"\n    Returns the length of the longest increasing subsequence in the given array of integers.\n    \n    :param nums: List[int] - The input array of integers.\n    :return: int - The length of the longest increasing subsequence.\n    \"\"\"\n    if not nums:\n        return 0\n    \n    dp = [1] * len(nums)\n    \n    for i in range(1, len(nums)):\n        for j in range(i):\n            if nums[i] > nums[j]:\n                dp[i] = max(dp[i], dp[j] + 1)\n    \n    return max(dp)\n\n# Example usage:\n# nums = [10, 9, 2, 5, 3, 7, 101, 18]\n# print(length_of_lis(nums))  # Output: 4\n",
+      "prompt": "\"\"\"\nYou are given an array of integers. Your task is to find the length of the longest increasing subsequence (LIS) in the array. An increasing subsequence is defined as a sequence where each element is strictly greater than the preceding one. \n\n**Input:**\n- The first line contains an integer `n` (1 ≤ n ≤ 1000), the number of elements in the array.\n- The second line contains `n` space-separated integers `a1, a2, ..., an` (−10^9 ≤ ai ≤ 10^9), the elements of the array.\n\n**Output:**\n- Print a single integer, the length of the longest increasing subsequence.\n\n**Sample Input:**\n```\n8\n10 9 2 5 3 7 101 18\n```\n\n**Sample Output:**\n```\n4\n```\n\"\"\"\n\n",
+      "new_test_score": 1.0
+    }
+  ],
+  "stdin_print_pattern_candidates": 111,
+  "candidate_locations": [
+    {
+      "split": "train",
+      "row_number": 18
+    },
+    {
+      "split": "train",
+      "row_number": 31
+    },
+    {
+      "split": "train",
+      "row_number": 46
+    },
+    {
+      "split": "train",
+      "row_number": 64
+    },
+    {
+      "split": "train",
+      "row_number": 69
+    },
+    {
+      "split": "train",
+      "row_number": 75
+    },
+    {
+      "split": "train",
+      "row_number": 134
+    },
+    {
+      "split": "train",
+      "row_number": 169
+    },
+    {
+      "split": "train",
+      "row_number": 173
+    },
+    {
+      "split": "train",
+      "row_number": 238
+    },
+    {
+      "split": "train",
+      "row_number": 250
+    },
+    {
+      "split": "train",
+      "row_number": 268
+    },
+    {
+      "split": "train",
+      "row_number": 308
+    },
+    {
+      "split": "train",
+      "row_number": 329
+    },
+    {
+      "split": "train",
+      "row_number": 347
+    },
+    {
+      "split": "train",
+      "row_number": 367
+    },
+    {
+      "split": "train",
+      "row_number": 381
+    },
+    {
+      "split": "train",
+      "row_number": 390
+    },
+    {
+      "split": "train",
+      "row_number": 402
+    },
+    {
+      "split": "train",
+      "row_number": 419
+    },
+    {
+      "split": "train",
+      "row_number": 436
+    },
+    {
+      "split": "train",
+      "row_number": 478
+    },
+    {
+      "split": "train",
+      "row_number": 509
+    },
+    {
+      "split": "train",
+      "row_number": 523
+    },
+    {
+      "split": "train",
+      "row_number": 524
+    },
+    {
+      "split": "train",
+      "row_number": 563
+    },
+    {
+      "split": "train",
+      "row_number": 616
+    },
+    {
+      "split": "train",
+      "row_number": 686
+    },
+    {
+      "split": "train",
+      "row_number": 746
+    },
+    {
+      "split": "train",
+      "row_number": 752
+    },
+    {
+      "split": "train",
+      "row_number": 755
+    },
+    {
+      "split": "train",
+      "row_number": 779
+    },
+    {
+      "split": "train",
+      "row_number": 847
+    },
+    {
+      "split": "train",
+      "row_number": 863
+    },
+    {
+      "split": "train",
+      "row_number": 902
+    },
+    {
+      "split": "train",
+      "row_number": 906
+    },
+    {
+      "split": "train",
+      "row_number": 934
+    },
+    {
+      "split": "train",
+      "row_number": 1005
+    },
+    {
+      "split": "train",
+      "row_number": 1039
+    },
+    {
+      "split": "train",
+      "row_number": 1082
+    },
+    {
+      "split": "train",
+      "row_number": 1090
+    },
+    {
+      "split": "train",
+      "row_number": 1095
+    },
+    {
+      "split": "train",
+      "row_number": 1109
+    },
+    {
+      "split": "train",
+      "row_number": 1143
+    },
+    {
+      "split": "train",
+      "row_number": 1155
+    },
+    {
+      "split": "train",
+      "row_number": 1237
+    },
+    {
+      "split": "train",
+      "row_number": 1271
+    },
+    {
+      "split": "train",
+      "row_number": 1306
+    },
+    {
+      "split": "train",
+      "row_number": 1372
+    },
+    {
+      "split": "train",
+      "row_number": 1395
+    },
+    {
+      "split": "train",
+      "row_number": 1401
+    },
+    {
+      "split": "train",
+      "row_number": 1418
+    },
+    {
+      "split": "train",
+      "row_number": 1471
+    },
+    {
+      "split": "train",
+      "row_number": 1516
+    },
+    {
+      "split": "train",
+      "row_number": 1541
+    },
+    {
+      "split": "train",
+      "row_number": 1581
+    },
+    {
+      "split": "train",
+      "row_number": 1590
+    },
+    {
+      "split": "train",
+      "row_number": 1595
+    },
+    {
+      "split": "train",
+      "row_number": 1650
+    },
+    {
+      "split": "train",
+      "row_number": 1695
+    },
+    {
+      "split": "train",
+      "row_number": 1696
+    },
+    {
+      "split": "train",
+      "row_number": 1700
+    },
+    {
+      "split": "train",
+      "row_number": 1769
+    },
+    {
+      "split": "train",
+      "row_number": 1795
+    },
+    {
+      "split": "train",
+      "row_number": 1797
+    },
+    {
+      "split": "train",
+      "row_number": 1801
+    },
+    {
+      "split": "train",
+      "row_number": 1847
+    },
+    {
+      "split": "train",
+      "row_number": 1857
+    },
+    {
+      "split": "train",
+      "row_number": 1896
+    },
+    {
+      "split": "train",
+      "row_number": 1903
+    },
+    {
+      "split": "train",
+      "row_number": 1917
+    },
+    {
+      "split": "train",
+      "row_number": 1941
+    },
+    {
+      "split": "train",
+      "row_number": 2005
+    },
+    {
+      "split": "train",
+      "row_number": 2009
+    },
+    {
+      "split": "train",
+      "row_number": 2037
+    },
+    {
+      "split": "train",
+      "row_number": 2087
+    },
+    {
+      "split": "train",
+      "row_number": 2097
+    },
+    {
+      "split": "train",
+      "row_number": 2124
+    },
+    {
+      "split": "train",
+      "row_number": 2125
+    },
+    {
+      "split": "train",
+      "row_number": 2271
+    },
+    {
+      "split": "train",
+      "row_number": 2301
+    },
+    {
+      "split": "train",
+      "row_number": 2306
+    },
+    {
+      "split": "train",
+      "row_number": 2396
+    },
+    {
+      "split": "train",
+      "row_number": 2406
+    },
+    {
+      "split": "train",
+      "row_number": 2483
+    },
+    {
+      "split": "train",
+      "row_number": 2595
+    },
+    {
+      "split": "train",
+      "row_number": 2627
+    },
+    {
+      "split": "train",
+      "row_number": 2688
+    },
+    {
+      "split": "train",
+      "row_number": 2798
+    },
+    {
+      "split": "train",
+      "row_number": 2814
+    },
+    {
+      "split": "train",
+      "row_number": 2817
+    },
+    {
+      "split": "train",
+      "row_number": 2820
+    },
+    {
+      "split": "train",
+      "row_number": 2862
+    },
+    {
+      "split": "train",
+      "row_number": 2865
+    },
+    {
+      "split": "train",
+      "row_number": 2940
+    },
+    {
+      "split": "train",
+      "row_number": 2985
+    },
+    {
+      "split": "train",
+      "row_number": 2987
+    },
+    {
+      "split": "train",
+      "row_number": 2994
+    },
+    {
+      "split": "train",
+      "row_number": 3042
+    },
+    {
+      "split": "train",
+      "row_number": 3063
+    },
+    {
+      "split": "train",
+      "row_number": 3065
+    },
+    {
+      "split": "train",
+      "row_number": 3085
+    },
+    {
+      "split": "train",
+      "row_number": 3165
+    },
+    {
+      "split": "train",
+      "row_number": 3174
+    },
+    {
+      "split": "train",
+      "row_number": 3210
+    },
+    {
+      "split": "valid",
+      "row_number": 47
+    },
+    {
+      "split": "valid",
+      "row_number": 110
+    },
+    {
+      "split": "valid",
+      "row_number": 132
+    },
+    {
+      "split": "valid",
+      "row_number": 141
+    },
+    {
+      "split": "valid",
+      "row_number": 146
+    },
+    {
+      "split": "valid",
+      "row_number": 150
+    }
+  ],
+  "note": "模式命中是候选数量，不等于逐题确认数量；针对性检查不能估计全量错误率。"
+}

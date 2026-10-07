@@ -7,7 +7,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 def docker_command(run_dir: Path, dataset_dir: Path) -> list[str]:

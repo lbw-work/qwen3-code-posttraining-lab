@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import random
 import time
 from pathlib import Path
 
@@ -11,31 +10,12 @@ from datasets import load_dataset
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoModelForSequenceClassification, AutoTokenizer
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
+from qwen_posttrain.policy import action_logprobs, prompt_order
 from train_common import locked_jsonl, new_run, save_meta, sft_adapter
 
 
 TEMPERATURE = 0.8
-
-
-def action_logprobs(
-    logits: torch.Tensor, ids: torch.Tensor, prompt_length: int, temperature: float = 1.0,
-) -> torch.Tensor:
-    """取出 rollout 中每个生成 token 在策略分布下的对数概率。
-
-    ``ids`` 形状为 ``[1, L+T]``，前 L 个是 prompt，后 T 个是模型采样的动作；``logits``
-    形状为 ``[1, L+T, V]``，位置 j 的 V 维向量预测 ids 的 j+1 位置。因此切片从 L-1
-    开始、去掉最后一个无目标位置，得到 ``[T, V]``；再按 actions gather 后返回 ``[T]``。
-    这个错一格，PPO 会把某个 token 的概率归给前一个或后一个动作，训练就失去意义。
-    当采样使用温度 T 时，先将 logits 除以 T 再求概率，保证 old/new 概率与
-    实际采样分布一致；DPO 不采样，调用时保留默认 T=1。
-    """
-    # logits[0, j] 预测 ids[0, j+1]。因此第一个生成 token
-    # ids[0, prompt_length] 对应 logits[0, prompt_length-1]。
-    # 采样使用 temperature 时，旧/新策略概率必须也来自同一个温度分布。
-    selected = (logits[0, prompt_length - 1:-1].float() / temperature).log_softmax(-1)
-    actions = ids[0, prompt_length:].unsqueeze(-1)
-    return selected.gather(-1, actions).squeeze(-1)
 
 
 def gae(rewards: torch.Tensor, values: torch.Tensor, lam: float = 0.95) -> tuple[torch.Tensor, torch.Tensor]:
@@ -115,12 +95,12 @@ def main() -> None:
     reward_adapter = reward_run / "final_model"
     if not (reward_adapter / "adapter_config.json").is_file():
         parser.error("奖励模型适配器不存在")
-    train_file, _, lock = locked_jsonl(ROOT / "data" / "rl", "rl")
+    train_file, _, lock = locked_jsonl(ROOT / "data" / "ppo", "ppo")
     prompts = load_dataset("json", data_files=str(train_file), split="train")["prompt"]
     if not prompts:
         parser.error("RL 提示词数据为空")
     run = new_run("ppo", args.run_id)
-    rng = random.Random(42)
+    order = prompt_order(len(prompts), 42)
     torch.manual_seed(42)
     tokenizer = AutoTokenizer.from_pretrained(sft, local_files_only=True)
 
@@ -158,7 +138,7 @@ def main() -> None:
         for step in range(1, args.max_steps + 1):
             if time.monotonic() - started >= args.max_hours * 3600:
                 break
-            question = rng.choice(prompts)
+            question = prompts[next(order)]
             prompt_ids = tokenizer(
                 question, return_tensors="pt", truncation=True, max_length=512,
                 add_special_tokens=False,
@@ -180,7 +160,10 @@ def main() -> None:
                 ref_logp = action_logprobs(ref_output.logits, ids, prompt_length, TEMPERATURE).detach()
                 old_hidden = old_output.hidden_states[-1][0, prompt_length - 1:-1].float()
                 old_values = value_head(old_hidden).squeeze(-1).detach()
-                rm_score = reward_model(input_ids=ids).logits[0, 0].float().clamp(-5, 5).detach()
+                raw_rm_score = reward_model(input_ids=ids).logits[0, 0].float().detach()
+                # 奖励模型只学相对排序，原始分数没有固定量纲；本次模型常给出 10～40 分。
+                # 先缩小 10 倍再限制极端值，避免多数正常答案直接被裁成同一个 +5。
+                rm_score = (raw_rm_score / 10).clamp(-5, 5)
 
             # 每个 token 扣除与冻结 SFT reference 的 log 概率差；
             # 可执行代码的总体奖励只加在最后一个生成 token 上。
@@ -208,7 +191,8 @@ def main() -> None:
                 optimizer.step()
             completed_steps = step
             row = {
-                "step": step, "reward_model_score": rm_score.item(),
+                "step": step, "raw_reward_model_score": raw_rm_score.item(),
+                "reward_model_score": rm_score.item(),
                 "mean_kl": (old_logp - ref_logp).mean().item(),
                 "policy_loss": policy_part.item(), "value_loss": value_part.item(),
                 "response_tokens": ids.shape[1] - prompt_length,
@@ -231,7 +215,7 @@ def main() -> None:
         run, stage="ppo", implementation="manual", sft_run=str(sft.parent), reward_run=str(reward_run),
         sft_adapter_config_sha256=sha256(sft / "adapter_config.json"),
         reward_adapter_config_sha256=sha256(reward_adapter / "adapter_config.json"),
-        rl_lock_sha256=sha256(ROOT / "data" / "rl.lock.json"),
+        ppo_lock_sha256=sha256(ROOT / "data" / "ppo.lock.json"),
         train_sha256=lock["train_sha256"], eval_sha256=lock["eval_sha256"],
         completed_steps=completed_steps, max_hours=args.max_hours,
         elapsed_seconds=time.monotonic() - started, seed=42,

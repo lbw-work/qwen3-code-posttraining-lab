@@ -6,7 +6,7 @@
   "steps": [
     {
       "file": "README.md",
-      "line": 12,
+      "line": 5,
       "title": "先建立一张实验地图",
       "description": "先看分叉关系：Base 是基线；Full SFT 独立训练；LoRA SFT 是 DPO、PPO、GRPO 的共同起点。读后续文件时始终追问一件事：本阶段的输入模型和输出模型分别是什么。"
     },
@@ -17,14 +17,14 @@
       "description": "首次运行把模型仓库的 main 解析为不可变提交号并写入 models.lock.json；以后只下载该提交。这里是复现实验的第一个锚点。"
     },
     {
-      "file": "scripts/generate_eval.py",
-      "line": 36,
+      "file": "src/qwen_posttrain/artifacts.py",
+      "line": 28,
       "title": "评测题先冻结再读取",
       "description": "verified_tasks 先检查 eval.jsonl 和两份官方题库的哈希，再返回题目。理解它，你就知道为什么每个阶段不能私自换题。"
     },
     {
       "file": "scripts/generate_eval.py",
-      "line": 58,
+      "line": 21,
       "title": "统一生成路径",
       "description": "这里区分完整模型和 LoRA 适配器。重点看 [1,L] 输入如何经 generate 变为 [1,L+N]，以及为什么只保存 N 个新增 token。"
     },
@@ -68,19 +68,19 @@
       "file": "scripts/train_common.py",
       "line": 26,
       "title": "三条偏好路线为什么能公平比较",
-      "description": "sft_adapter 强制 DPO、PPO、GRPO 从同一个 LoRA SFT final_model 分叉；TimeBudget 则给 DPO/GRPO 可比较的墙钟上限。"
+      "description": "sft_adapter 校验 LoRA SFT 运行目录和阶段，避免把 DPO 接在 PPO 后面。它约束同类 SFT 起点；具体是否使用同一运行，还需核对训练元数据。TimeBudget 只服务奖励模型 Trainer；DPO、GRPO 在各自手写循环里检查时间预算。"
     },
     {
       "file": "scripts/prepare_preference.py",
-      "line": 16,
+      "line": 105,
       "title": "偏好对先变成代码对",
       "description": "python_code 拒绝说明文字和非函数代码。随后 main 只保留 Python 功能正确性偏好对，并以与 SFT 相同的思路去重和防污染。"
     },
     {
       "file": "scripts/train_dpo.py",
-      "line": 15,
+      "line": 65,
       "title": "DPO：直接使用 chosen 与 rejected",
-      "description": "先看 load_sft_copy 的 policy/reference 双副本，再看 main 中的 DPOTrainer。核心是比较两份答案相对 reference 的 log probability，不需要单独奖励模型。"
+      "description": "先看 dpo_loss 如何比较 chosen/rejected 相对冻结 reference 的对数概率，再读 answer_input 的答案掩码和 main 的梯度累积；训练循环由 PyTorch 手写实现，不使用 DPOTrainer。"
     },
     {
       "file": "scripts/train_reward.py",
@@ -89,20 +89,20 @@
       "description": "它用同一偏好对训练 r(chosen) 大于 r(rejected)。注意 score 头必须随 LoRA 保存；这是 PPO 的唯一外部奖励来源。"
     },
     {
-      "file": "scripts/train_ppo.py",
-      "line": 18,
+      "file": "src/qwen_posttrain/policy.py",
+      "line": 22,
       "title": "PPO 先读三个数学函数",
-      "description": "按 action_logprobs、gae、ppo_loss 的顺序读。先搞清 token 概率的错位关系，再看优势估计，最后看 probability ratio 的裁剪。"
+      "description": "共享 action_logprobs 已移到公共包：先理解 [1,L+T,V] logits 到 [T] 动作对数概率的对齐与温度，再回到 train_ppo.py 阅读 gae 和 ppo_loss。GRPO 与 DPO 复核共用这个函数。"
     },
     {
       "file": "scripts/train_ppo.py",
-      "line": 83,
+      "line": 71,
       "title": "PPO 的完整 rollout 与更新",
       "description": "这段把 policy、冻结 reference、冻结奖励模型和 value head 放到一起。先采样，再记 old_logp/奖励，最后两次更新；读懂它即可区分经典 RLHF 和 DPO。"
     },
     {
       "file": "scripts/train_grpo.py",
-      "line": 16,
+      "line": 28,
       "title": "GRPO：真实测试代替奖励模型",
       "description": "GRPO 将同题多份代码送到隔离执行奖励，再在同组内部比较相对分数。继续跳到 code_reward.py 可查看为什么候选代码不会在训练宿主机执行。"
     },

@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 REQUIRED = {"base", "full_sft", "lora_sft", "dpo", "ppo", "grpo"}

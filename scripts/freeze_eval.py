@@ -1,6 +1,5 @@
 """固定 EvalPlus 题目和测试快照，生成之后所有模型共用的 eval.jsonl。"""
 
-import hashlib
 import importlib.metadata
 import json
 import os
@@ -11,22 +10,8 @@ from evalplus.data import get_human_eval_plus, get_mbpp_plus
 from evalplus.data import humaneval, mbpp
 
 
-ROOT = Path(__file__).resolve().parents[1]
+from qwen_posttrain.artifacts import ROOT, sha256
 DATA_DIR = ROOT / "data" / "evalplus"
-
-
-def sha256(path: Path) -> str:
-    """分块计算文件的 SHA256，用内容而非文件名锁定题库。
-
-    ``eval.lock.json`` 保存的是这个返回值。以后即使某个缓存文件仍叫原来的
-    名字，只要内容被升级、替换或损坏，哈希值就会不同。每次只读取 1 MiB，
-    避免大题库文件被一次性读入内存。
-    """
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
 
 
 def main() -> None:

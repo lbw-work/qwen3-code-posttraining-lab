@@ -11,7 +11,7 @@ from peft import LoraConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import SFTConfig, SFTTrainer
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 def checked_data() -> tuple[Path, Path, dict]:

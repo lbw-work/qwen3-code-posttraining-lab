@@ -1,0 +1,21 @@
+{
+  "stage": "ppo",
+  "implementation": "manual",
+  "sft_run": "/root/autodl-tmp/qwen3-code-posttrain/runs/lora_sft/lora-v1",
+  "reward_run": "/root/autodl-tmp/qwen3-code-posttrain/runs/reward/reward-v2",
+  "sft_adapter_config_sha256": "98762a1aeacf53e90ff11b13f5ce88a6c3a26d3516e13b416532d4f16ee0fe5e",
+  "reward_adapter_config_sha256": "9531bd1d8f6debf135cbc7e78554e23e8c0994f96e201479545a2895b48c5785",
+  "ppo_lock_sha256": "1f07a2c486119199b000cee59e999933a40e733d6bc0732fd7e78acc81a392d9",
+  "train_sha256": "ca5c4b9a1b61383bbc73995a6fd7c048a4353e3b097fd3391aaf3a91eec3e568",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "completed_steps": 1000,
+  "max_hours": 4.0,
+  "elapsed_seconds": 6312.0940076857805,
+  "seed": 42,
+  "beta_kl": 0.02,
+  "ppo_epochs": 2,
+  "clip": 0.2,
+  "temperature": 0.8,
+  "top_k": 0,
+  "top_p": 1.0
+}

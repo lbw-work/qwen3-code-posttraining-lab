@@ -6,7 +6,7 @@ import json
 import random
 from pathlib import Path
 
-from generate_eval import ROOT, sha256
+from qwen_posttrain.artifacts import ROOT, sha256
 
 
 # 这些是“训练阶段 -> 实际读取的数据文件”的关系。Full SFT 和 LoRA SFT 的
@@ -16,7 +16,9 @@ DATASETS = {
     "evaluation": ROOT / "eval.jsonl",
     "sft": ROOT / "data" / "sft" / "train.jsonl",
     "preference": ROOT / "data" / "preference" / "train.jsonl",
+    "ppo": ROOT / "data" / "ppo" / "train.jsonl",
     "rl": ROOT / "data" / "rl" / "train.jsonl",
+    "grpo": ROOT / "data" / "grpo" / "train.jsonl",
 }
 STAGES = {
     "base": "evaluation",
@@ -24,8 +26,8 @@ STAGES = {
     "lora_sft": "sft",
     "dpo": "preference",
     "reward_model": "preference",
-    "ppo": "rl",
-    "grpo": "rl",
+    "ppo": "ppo",
+    "grpo": "grpo",
 }
 
 
@@ -56,7 +58,7 @@ def main() -> None:
     """生成 ``data/examples`` 下的样例与阶段映射清单。
 
     只有真正存在的已冻结数据才会被抽样。若偏好数据尚未执行
-    ``export_themis.py -> prepare_preference.py``，清单会明确标记它不可用，而不会
+    偏好导出脚本与 ``prepare_preference.py``，清单会明确标记它不可用，而不会
     用手写或合成记录凑数。这样读者既能看见已准备数据的真实格式，也能准确知道
     哪条训练路线还缺少数据准备。
     """

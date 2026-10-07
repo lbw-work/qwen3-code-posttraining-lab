@@ -1,0 +1,24 @@
+{
+  "stage": "dpo",
+  "implementation": "manual",
+  "sft_run": "/root/autodl-tmp/qwen3-code-posttrain/runs/lora_sft/lora-v1",
+  "sft_adapter_config_sha256": "98762a1aeacf53e90ff11b13f5ce88a6c3a26d3516e13b416532d4f16ee0fe5e",
+  "preference_lock_sha256": "d19b087d62d01c38f21ca99aabd6a3c3ad236105a43bef64b2eb698f382f8214",
+  "train_sha256": "3296d9cfcc2198684a2f8d715987d9723d79e571243f03a067d4330ad00e330c",
+  "valid_sha256": "45eccf6ed3419edbb19b4cafb6f7116105f47c99cfde06b818690e16f1927f8b",
+  "eval_sha256": "a16f69e2168931ada41de942eac5bea64b7398a11f2d93d5c183351d39cd529f",
+  "best_checkpoint": "/root/autodl-tmp/qwen3-code-posttrain/runs/dpo/dpo-v2/checkpoints/best",
+  "best_eval_loss": 0.20805935873315226,
+  "global_step": 201,
+  "train_runtime_seconds": 1881.9533570222557,
+  "max_hours": 6.0,
+  "settings": {
+    "beta": 0.1,
+    "max_length": 1024,
+    "gradient_accumulation_steps": 16,
+    "learning_rate": 5e-06,
+    "num_train_epochs": 1,
+    "eval_steps": 200,
+    "seed": 42
+  }
+}
